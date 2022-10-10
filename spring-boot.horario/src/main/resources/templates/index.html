@@ -5,6 +5,12 @@
 <title th:text="${titulo}"></title>
 </head>
 <body>
+	<div>
+		<div class="alert alert-success" th:if="${horario!=null}">
+			<span th:text="${horario}"></span>
+		</div>
+	</div>
+
 
 </body>
 </html>
