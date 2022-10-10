@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title th:text="${titulo}"></title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+	crossorigin="anonymous">
+<script
+	src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+	integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+	crossorigin="anonymous"></script>
+</head>
+<body>
+	<div th:replace="components/tiempo :: interceptor"></div>
+	<h1 th:text="${titulo}"></h1>
+	<!-- Forma 1 de hacerlo tradicionalemente -->
+	<!-- <form th:action="@{/form}" method="post">-->
+	<!-- Forma 2 de hacerlo explotando un poco más la usabilidad de thymeleaf y spring
+		-Se declara el objeto en el form al cúal esta mapeado el formulario, pero sólo funciona si los campos son iguales
+		 y se debe declarar tal cual esta en el controller pasando a la vista
+		 
+		 *-> al usar el '*{}' significa en thymeleaf que vamos a mapear campo formulario a enitity o bean
+		 @ -> se usa para especificar rutas
+		 # -> se usa para usar un helper o util de thymelef
+		 fields.hasErrors -> para hacer uso se tiene que anteceder con el # de thymeleaf en conjunto queda '${#fields.hasErrors}' y es un helper
+		 de validacion de thymeleaf y Spring unicamente
+	 -->
+	 <div class="container">
+	 <form th:action="@{/form}" th:object="${usuario}" method="post">
+	 	<div class="form-group row">
+			<label for="habilitar" class="col-form-label col-sm-2">Habilitar:</label>
+			<div class="form-check form-switch row col-sm-4 m-3">
+					<input type="checkbox" id="habilitar" role="switch" th:field="*{habilitar}" class="form-check-input"/>
+
+			</div>
+		</div>
+	<!-- Recorrer un entity con ciclo para llenar un combo -->
+	
+	<div class="form-group row mb-2">
+			<label for="pais" class="col-form-label col-sm-2">País:</label>
+			<div class="col-sm-4">
+				<select id="pais" th:field="*{pais}" class="form-control"> 
+					<option value="">-- Selecciona un país --</option>
+					<option th:each="pais: ${listaPaises}" th:value="${pais.id}" th:text="${pais.nombre}"></option>
+				</select>
+			</div>
+			<div th:if="${#fields.hasErrors('pais')}" th:errors="*{pais}" class="alert alert-danger"></div>
+		</div>
+	 
+	<!-- Recorrer un Map de string-->
+	<!-- 
+		<div>
+			<label for="pais">País:</label>
+			<div>
+				<select id="pais" th:field="*{pais}">
+					<option value="">-- Selecciona un país --</option>
+					<option th:each="pais: ${paisesMap.entrySet()}" th:value="${pais.key}" th:text="${pais.value}"></option>
+				</select>
+			</div>
+			<div th:if="${#fields.hasErrors('pais')}" th:errors="*{pais}"></div>
+		</div>-->
+		<!-- 
+		 Recorrer un arraySimple de strings
+		<div>
+			<label for="pais">País:</label>
+			<div>
+				<select id="pais" th:field="*{pais}">
+					<option value="">-- Selecciona un país --</option>
+					<option th:each="pais: ${paises}" th:text="${pais}"
+						th:value="${pais}"></option>
+				</select>
+			</div>
+			<div th:if="${#fields.hasErrors('pais')}" th:errors="*{pais}"></div>
+		</div>-->
+		<div  class="form-group row mb-3">
+			<label for="username" class="col-form-label col-sm-2">Username:</label>
+			<div  class="col-sm-4">
+				<!-- Forma 1 de hacerlo tradicionalmente  -->
+				<!-- <input type="text" name="username" id="username" th:value="${usuario.username}">-->
+				<!-- Forma 2 de hacerlo por medio del objeto declarado en el form y se cambia la sintaxis de la etiqueta input quitando
+				el name y el value, ya que el namespace th:field ya los incluye   -->
+				<input type="text" id="username" th:field="*{username}" class="form-control"/>
+			</div>
+			<!-- Lo que hace la instruccion completa de thymeleaf + spring es lo siguiente:
+				Primero llama el helper de thymeleaf para validar en funcion de los atributod del objeto declarado en el form
+				Luego mapea el campo del formulario hacia el entity	
+			 -->
+			<div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="alert alert-danger"></div>
+		</div>
+		
+		<!-- Recorrer Checkbox usando objeto Rol -->
+		<div class="form-group row mb-3">
+			<label class="col-form-label col-sm-2 me-3">Roles:</label>
+			<div th:each="rol : ${roles}" class="form-check col-sm-1 me-4">
+				<input type="checkbox" th:field="*{roles}" th:value="${rol.id}"  th:checked="${#lists.contains(usuario.roles, role)}" class="form-check-input"/>
+				<label th:for=${#ids.prev('roles')} th:text="${rol.nombre}" class="form-check-label col-sm-2"></label>
+			</div>
+			<div th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}" class="alert alert-danger"></div>
+		</div>
+		
+		<!-- Recorrer un checkbox HashMap 
+		<div>
+			<div th:each="rol : ${listaRolesMap.entrySet()}">
+				<input type="checkbox" th:field="*{roles}" th:value="${rol.key}" />
+				<label th:for=${#ids.prev('roles')} th:text="${rol.value}"></label>
+			</div>
+			<div th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}"></div>
+		</div>-->
+		<!--
+			Recorrer checkbox con una lista 
+		<div>
+			<div th:each="rol : ${listaRolesString}">
+				<input type="checkbox" th:field="*{roles}" th:value="${rol}" />
+				<label th:for=${#ids.prev('roles')} th:text="${rol}"></label>
+			</div>
+			<div th:if="${#fields.hasErrors('roles')}" th:errors="*{roles}"></div>
+		</div>-->
+		<div class="form-group row mb-3">
+			<label for="password" class="col-form-label col-sm-2">Password:</label>
+			<div  class="col-sm-4">
+				<input type="password" id="password" th:field="*{password}" class="form-control"/>
+			</div>
+			<div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="alert alert-danger"></div>
+		</div>
+		<div  class="form-group row mb-3">
+			<label for="email" class="col-form-label col-sm-2">E-mail:</label>
+			<div class="col-sm-4">
+				<input type="text" id="email" th:field="*{email}" class="form-control"/>
+			</div>
+			<div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="alert alert-danger"></div>
+		</div>
+		<div class="form-group row mb-3">
+			<label for="nombre" class="col-form-label col-sm-2">Nombre:</label>
+			<div  class="col-sm-4">
+				<input type="text" id="nombre" th:field="*{nombre}" class="form-control"/>
+			</div>
+			<div th:if="${#fields.hasErrors('nombre')}" th:errors="*{nombre}" class="alert alert-danger"></div>
+		</div>
+		<div class="form-group row mb-3">
+			<label for="apellido" class="col-form-label col-sm-2">Apellido:</label>
+			<div  class="col-sm-4">
+				<input type="text" id="apellido" th:field="*{apellido}" class="form-control"/>
+			</div>
+			<div th:if="${#fields.hasErrors('apellido')}" th:errors="*{apellido}" class="alert alert-danger"></div>
+		</div>
+		<div class="form-group row mb-3">
+			<label for="fechaNacimiento" class="col-form-label col-sm-2">Fecha de Nacimiento:</label>
+			<div class="col-sm-4">
+				<input type="date" id="fechaNacimiento"
+					th:field="*{fechaNacimiento}" class="form-control"/>
+			</div>
+			<div th:if="${#fields.hasErrors('fechaNacimiento')}"
+				th:errors="*{fechaNacimiento}" class="alert alert-danger"></div>
+		</div>
+		<div class="form-group row mb-3">
+			<label class="col-form-label col-sm-2">Género:</label>
+			<div th:each="gen : ${genero}" class="col-sm-1">
+				<input type="radio" th:field="*{genero}" th:value="${gen}" 	class="form-check-input col-sm-2"/>
+				<label th:for=${#ids.prev('genero')} th:text="${gen}" class="form-check-label col-sm-2"></label>
+			</div>
+			<div th:if="${#fields.hasErrors('genero')}"
+				th:errors="*{genero}"  class="alert alert-danger"></div>
+		</div>
+		<div class="form-group row mb-3">
+			<label for="cuenta" class="col-form-label col-sm-2">Cuenta:</label>
+			<div class="col-sm-4">
+				<input type="number" id="cuenta" th:field="*{cuenta}" class="form-control"/>
+			</div>
+			<div th:if="${#fields.hasErrors('cuenta')}" th:errors="*{cuenta}" class="alert alert-danger"></div>
+		</div>
+		<div class="form-group row mb-3">
+			<div class="col-sm-4">
+				<input type="submit" value="Enviar" class="btn btn-primary"/>
+			</div>
+		</div>
+		<input type="hidden" th:field="*{valorSecreto}">
+	</form>
+	</div>
+</body>
+</html>

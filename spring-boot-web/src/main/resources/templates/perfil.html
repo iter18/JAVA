@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title  th:text="${tituloP}"></title>
+</head>
+<body>
+<h1 th:text="${tituloP}"></h1>
+<!-- Al acceder a la propiedad tiene que ser igual al declarado en el model -->
+<span th:text="${usuario.nombre}"></span>
+<span th:text="${usuario.apellido}"></span><br>
+
+<span th:if="${usuario.email}" th:text="${usuario.email}"></span>
+<span th:if="${usuario.email == null}">El Usuario no tiene email</span>
+
+
+</body>
+</html>

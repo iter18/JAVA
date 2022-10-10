@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+
+<h1 th:text="${titulo}"></h1> 
+
+<ul>
+	<li>
+
+		<a th:href="@{/variables/string/}+'Hola Aarón'">Enviar 1 parametro por @PathVarible</a>
+	</li>
+	<li>
+		<a th:href="@{/variables/string/}+'Hola Vivi'">Enviar un segundo texto con 1 parametro por @PathVariabe</a>
+	</li>
+	
+	<li>
+
+		<a th:href="@{/variables/string/}+'Hola como estan' + '/' + 10">Enviar parametros saludo y número es decir se envian más de 1 parámetro</a>
+	</li>
+</ul>
+
+</body>
+</html>

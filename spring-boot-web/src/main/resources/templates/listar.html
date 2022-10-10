@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!-- Para recibir datos de mi backend, en este caso del controller se tiene que configurar la vista:
+		1.- En la tag de html agrego agrego el namespace xmlns:th="http://www.thymeleaf.org"
+		2.- Ahora en las tag donde quiera usar, recibir o ver el dato del back (controller) se escribe lo siguiente:
+				th:text="${nombre de la ref definido en el controller (backend) en este caso del model que se pasa como argumento}"
+	NOTA: todo este ejercicio es para thymeleaf, talvez para react, angular, etc sea diferente la implementación-->
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8" />
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<h1 th:text="${titulo}"></h1>
+	
+	<div th:if="${usuarios.isEmpty()}">No hay usuarios en la Lista!</div>
+	
+	<!-- Proceso de foreach thymeleaf -->
+	<table th:if="${!usuarios.isEmpty()}">
+		<thead>
+			<tr>
+				<td>Nombre</td>
+				<td>Apellido</td>
+				<td>Email</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="usuario:${usuarios}">
+				<td th:text="${usuario.nombre}"></td>
+				<td th:text="${usuario.apellido}"></td>
+				<td th:text="${usuario.email}"></td>
+			</tr>
+		</tbody>
+	</table>
+
+</body>
+</html>
