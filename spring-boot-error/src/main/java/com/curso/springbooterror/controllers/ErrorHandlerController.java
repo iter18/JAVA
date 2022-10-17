@@ -18,7 +18,7 @@ import java.util.Date;
 public class ErrorHandlerController {
 
     //La anotación funciona para maper las excepciones, para decalrar mas de un tipo de excepcion se usan las llaves
-    @ExceptionHandler({ArithmeticException.class, NumberFormatException.class})
+    @ExceptionHandler({ArithmeticException.class, NumberFormatException.class, NullPointerException.class})
     public String arithmeticError(Exception ex, Model model){
         //model.addAttribute("error","Error de tipo aritmético");
         model.addAttribute("error","Error de origen");
