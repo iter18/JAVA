@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title th:text="${titulo}"></title>
+</head>
+<body>
+	<div>
+		<div class="alert alert-success" th:if="${horario!=null}">
+			<span th:text="${cierre}"></span>
+		</div>
+	</div>
+
+
+</body>
+</html>
