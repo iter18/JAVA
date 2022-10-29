@@ -1,6 +1,6 @@
-package com.example.springboot.app.models.dao.repository.impl;
+package com.example.springboot.app.dao.repositorys.impl;
 
-import com.example.springboot.app.models.dao.repository.ClienteDao;
+import com.example.springboot.app.dao.repositorys.ClienteDao;
 import com.example.springboot.app.models.entity.Cliente;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

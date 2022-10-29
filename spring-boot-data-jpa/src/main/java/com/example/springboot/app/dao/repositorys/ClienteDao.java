@@ -1,4 +1,4 @@
-package com.example.springboot.app.models.dao.repository;
+package com.example.springboot.app.dao.repositorys;
 
 import com.example.springboot.app.models.entity.Cliente;
 
