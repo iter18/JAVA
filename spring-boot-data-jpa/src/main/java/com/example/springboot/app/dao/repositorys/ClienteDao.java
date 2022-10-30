@@ -7,4 +7,6 @@ import java.util.List;
 public interface ClienteDao {
     
     List<Cliente> findAll();
+
+    void save(Cliente cliente);
 }
