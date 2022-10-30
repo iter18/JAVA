@@ -14,38 +14,43 @@
     <div th:replace="components/navBar :: navbar"></div>
     <div class="container text-center">
         <h1 class="text-secondary border border-success border-top-0 border-end-0 border-start-0 shadow-sm p-3 mb-5 bg-body" th:text="${titulo}"></h1>
+       <div th:object="${cliente}" th:remove="tag" >
+            <ul th:if="${#fields.hasErrors('*')}" class="text-start ps-5 alert alert-danger">
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+       </div>
         <form method="post" th:object="${cliente}" th:action="@{/form}">
             <table class="table table-striped text-center">
                 <tr>
                     <td>Nombre:</td>
                     <td>
-                        <input type="text" th:field="*{nombre}" class="form-control" th:errorclass="'form-control alert-danger'"/>
+                        <input type="text" th:field="*{nombre}" class="form-control" th:errorclass="'alert alert-danger'"/>
                         <small th:if="${#fields.hasErrors('nombre')}"
-                             th:errors="*{nombre}" class="alert alert-danger"></small>
+                             th:errors="*{nombre}" class="form-text text-danger"></small>
                     </td>
                 </tr>
                 <tr>
                     <td>Apellido:</td>
                     <td>
-                        <input type="text" th:field="*{apellido}" class="form-control" th:errorclass="'form-control alert-danger'"/>
+                        <input type="text" th:field="*{apellido}" class="form-control" th:errorclass="'alert alert-danger'"/>
                         <small th:if="${#fields.hasErrors('apellido')}"
-                               th:errors="*{apellido}" class="alert alert-danger"></small>
+                               th:errors="*{apellido}" class="form-text text-danger"></small>
                     </td>
                 </tr>
                 <tr>
                     <td>Correo:</td>
                     <td>
-                        <input type="email" th:field="*{email}" class="form-control" th:errorclass="'form-control alert-danger'"/>
+                        <input type="email" th:field="*{email}" class="form-control" th:errorclass="'alert alert-danger'"/>
                         <small th:if="${#fields.hasErrors('email')}"
-                               th:errors="*{email}" class="alert alert-danger"></small>
+                               th:errors="*{email}" class="form-text text-danger"></small>
                     </td>
                 </tr>
                 <tr>
                     <td>Fecha:</td>
                     <td>
-                        <input type="date" th:field="*{createAt}" class="form-control" th:errorclass="'form-control alert-danger'"/>
+                        <input type="date" th:field="*{createAt}" class="form-control" th:errorclass="'alert alert-danger'"/>
                         <small th:if="${#fields.hasErrors('createAt')}"
-                               th:errors="*{createAt}" class="alert alert-danger"></small>
+                               th:errors="*{createAt}" class="form-text text-danger"></small>
                     </td>
                 </tr>
                 <tr>

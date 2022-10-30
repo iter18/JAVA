@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -32,6 +33,7 @@ public class Cliente implements Serializable {
     private String apellido;
 
     @NotEmpty
+    @Email
     private String email;
 
     @NotNull
