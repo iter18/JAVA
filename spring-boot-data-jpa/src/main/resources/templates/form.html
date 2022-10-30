@@ -17,16 +17,20 @@
         <form method="post" th:object="${cliente}" th:action="@{/form}">
             <table class="table table-striped text-center">
                 <tr>
-                    <td>Nombre</td>
+                    <td>Nombre:</td>
                     <td><input type="text" th:field="*{nombre}" class="form-control"/></td>
                 </tr>
                 <tr>
-                    <td>Apellido</td>
+                    <td>Apellido:</td>
                     <td><input type="text" th:field="*{apellido}" class="form-control"/></td>
                 </tr>
                 <tr>
-                    <td>Correo</td>
+                    <td>Correo:</td>
                     <td><input type="email" th:field="*{email}" class="form-control"/></td>
+                </tr>
+                <tr>
+                    <td>Fecha:</td>
+                    <td><input type="date" th:field="*{createAt}" class="form-control"/></td>
                 </tr>
                 <tr>
                     <td><input type="submit" value="Crear Cliente" class="btn btn-primary"/></td>

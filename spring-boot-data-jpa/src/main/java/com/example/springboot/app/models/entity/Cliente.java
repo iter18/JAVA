@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -29,15 +30,13 @@ public class Cliente implements Serializable {
 
     @Column(name = "create_at")
     @Temporal(TemporalType.DATE)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
 
     /*
     * La etiqueta PrePersist sirve para realizar una accion en el entity Manager antes de que persista o se guarde
     * los datos dentro del entity para realizar una acción
     * */
-    @PrePersist
-    public void prePersist(){
-        createAt = new Date();
-    }
+
 
 }
