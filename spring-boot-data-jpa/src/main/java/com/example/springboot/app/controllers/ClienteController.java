@@ -32,7 +32,7 @@ public class ClienteController {
         return "form";
     }
 
-    @PostMapping(value="")
+    @PostMapping(value="/form")
     public String guardar(Cliente cliente){
         clienteDao.save(cliente);
         return "redirect:listar";

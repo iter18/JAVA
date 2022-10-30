@@ -5,14 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Column;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -29,6 +22,7 @@ public class Cliente implements Serializable {
     private Long id;
     private static final long serialVersionUID = 1L;
 
+
     private String nombre;
     private String apellido;
     private String email;
@@ -37,5 +31,13 @@ public class Cliente implements Serializable {
     @Temporal(TemporalType.DATE)
     private Date createAt;
 
+    /*
+    * La etiqueta PrePersist sirve para realizar una accion en el entity Manager antes de que persista o se guarde
+    * los datos dentro del entity para realizar una acción
+    * */
+    @PrePersist
+    public void prePersist(){
+        createAt = new Date();
+    }
 
 }

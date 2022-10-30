@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="navbar" >
+  <nav class="navbar navbar-expand-lg bg-light" style="background-color: #6bb23e !important;">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#" style="color:#fff !important;">SPRING BOOT</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon" style="color:#fff !important;"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+          <a class="nav-link active" aria-current="page" href="#" style="color:#fff !important;">Home</a>
+          <a class="nav-link" th:href="@{/listar}" style="color:#fff !important;">Clientes</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>
+
+</body>
+</html>
