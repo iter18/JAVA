@@ -7,8 +7,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Repository
-public class ClienteDaoImpl implements ClienteDao {
+/*SE
+ *Se inabilita los métodos de implemenacion del repository por que estos son manuales y se implementa CrudRepository
+ */
+//@Repository
+//public class ClienteDaoImpl implements ClienteDao {
+public class ClienteDaoImpl{
     /* EntityManager sirve para realizar transacciones con los entitys declarados,
         en este caso estamos utilizando JPA Hibernate y se necesita declarar el entity con el que va interactuar
         el repository, en caso de DATA JPA y API CRUD Repository no es necesario declarar.
@@ -24,14 +28,14 @@ public class ClienteDaoImpl implements ClienteDao {
     * diciendo en la propiedad que sea de sólo lectura, para que no se usen para modificar los datos.
     * */
 
-    @Override
-    public List<Cliente> findAll() {
+   // @Override
+    public List<Cliente> buscarTodos() {
         return em.createQuery("from Cliente").getResultList();
     }
 
 
-    @Override
-    public void save(Cliente cliente) {
+    //@Override
+    public void guardar(Cliente cliente) {
         if(cliente.getId()!=null && cliente.getId()>0){
             //es igual que saveAndFlush
             em.merge(cliente);
@@ -42,15 +46,15 @@ public class ClienteDaoImpl implements ClienteDao {
 
     }
 
-    @Override
-    public Cliente findById(Long id) {
+    //@Override
+    public Cliente buscarPorID(Long id) {
         //es como findOne
         return em.find(Cliente.class,id);
     }
 
-    @Override
-    public void delete(Long id) {
+    //@Override
+    public void borrar(Long id) {
         //Es igual que delete elimina
-        em.remove(findById(id));
+        em.remove(buscarPorID(id));
     }
 }
