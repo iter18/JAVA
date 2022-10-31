@@ -3,8 +3,6 @@ package com.example.springboot.app.dao.repositorys.impl;
 import com.example.springboot.app.dao.repositorys.ClienteDao;
 import com.example.springboot.app.models.entity.Cliente;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -25,13 +23,13 @@ public class ClienteDaoImpl implements ClienteDao {
     * La anotación Transactional sirve para realizar efectivos los cambios en la bd, en este caso le estamos
     * diciendo en la propiedad que sea de sólo lectura, para que no se usen para modificar los datos.
     * */
-    @Transactional(readOnly = true)
+
     @Override
     public List<Cliente> findAll() {
         return em.createQuery("from Cliente").getResultList();
     }
 
-    @Transactional
+
     @Override
     public void save(Cliente cliente) {
         if(cliente.getId()!=null && cliente.getId()>0){
@@ -45,14 +43,12 @@ public class ClienteDaoImpl implements ClienteDao {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Cliente findById(Long id) {
         //es como findOne
         return em.find(Cliente.class,id);
     }
 
     @Override
-    @Transactional
     public void delete(Long id) {
         //Es igual que delete elimina
         em.remove(findById(id));

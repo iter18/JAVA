@@ -1,6 +1,6 @@
 package com.example.springboot.app.controllers;
 
-import com.example.springboot.app.dao.repositorys.ClienteDao;
+import com.example.springboot.app.dao.services.ClienteService;
 import com.example.springboot.app.models.entity.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,12 +17,12 @@ import java.util.Map;
 public class ClienteController {
 
     @Autowired
-    private ClienteDao clienteDao;
+    private ClienteService clienteService;
 
     @GetMapping(value="/listar")
     public String listar(Model model){
         model.addAttribute("titulo","Listado de clientes");
-        model.addAttribute("clientes",clienteDao.findAll());
+        model.addAttribute("clientes",clienteService.findAll());
 
         return "listar";
     }
@@ -41,7 +41,7 @@ public class ClienteController {
             model.addAttribute("titulo","Formulario cliente");
             return "form";
         }
-        clienteDao.save(cliente);
+        clienteService.save(cliente);
         status.setComplete();
         return "redirect:listar";
     }
@@ -50,7 +50,7 @@ public class ClienteController {
     public String editar(@PathVariable("id") Long id, Map<String,Object> model){
         Cliente cliente = null;
         if(id>0){
-            cliente = clienteDao.findById(id);
+            cliente = clienteService.findById(id);
         }else{
             return "redirect:/listar";
         }
@@ -63,7 +63,7 @@ public class ClienteController {
     public String eliminar(@PathVariable("id") Long id){
         Cliente cliente = null;
         if(id>0){
-            clienteDao.delete(id);
+            clienteService.delete(id);
         }
         return "redirect:/listar";
     }
