@@ -6,13 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.support.SessionStatus;
 
 import javax.validation.Valid;
 import java.util.Map;
 
 @Controller
+@SessionAttributes("cliente")
 public class ClienteController {
 
     @Autowired
@@ -35,12 +36,35 @@ public class ClienteController {
     }
 
     @PostMapping(value="/form")
-    public String guardar(@Valid Cliente cliente, BindingResult result, Model model){
+    public String guardar(@Valid Cliente cliente, BindingResult result, Model model, SessionStatus status){
         if(result.hasErrors()){
             model.addAttribute("titulo","Formulario cliente");
             return "form";
         }
         clienteDao.save(cliente);
+        status.setComplete();
         return "redirect:listar";
+    }
+
+    @RequestMapping(value="/form/{id}")
+    public String editar(@PathVariable("id") Long id, Map<String,Object> model){
+        Cliente cliente = null;
+        if(id>0){
+            cliente = clienteDao.findById(id);
+        }else{
+            return "redirect:/listar";
+        }
+        model.put("cliente",cliente);
+        model.put("titulo","Editar cliente");
+        return "form";
+    }
+
+    @RequestMapping(value="/eliminar/{id}")
+    public String eliminar(@PathVariable("id") Long id){
+        Cliente cliente = null;
+        if(id>0){
+            clienteDao.delete(id);
+        }
+        return "redirect:/listar";
     }
 }

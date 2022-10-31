@@ -34,6 +34,27 @@ public class ClienteDaoImpl implements ClienteDao {
     @Transactional
     @Override
     public void save(Cliente cliente) {
-        em.persist(cliente);
+        if(cliente.getId()!=null && cliente.getId()>0){
+            //es igual que saveAndFlush
+            em.merge(cliente);
+        }else{
+            //es igual que save para guardar
+            em.persist(cliente);
+        }
+
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Cliente findById(Long id) {
+        //es como findOne
+        return em.find(Cliente.class,id);
+    }
+
+    @Override
+    @Transactional
+    public void delete(Long id) {
+        //Es igual que delete elimina
+        em.remove(findById(id));
     }
 }

@@ -23,6 +23,7 @@
                 <td>Apellido</td>
                 <td>Correo</td>
                 <td>Fecha Alta</td>
+                <td>Acciones</td>
             </tr>
             </thead>
             <tbody>
@@ -32,6 +33,14 @@
                 <td th:text="${cliente.apellido}"></td>
                 <td th:text="${cliente.email}"></td>
                 <td th:text="${cliente.createAt}"></td>
+                <td>
+                    <a th:href="@{/form/}+${cliente.id}">
+                        <button type="button" class="btn btn-primary">Editar</button>
+                    </a>
+                    <a th:href="@{/eliminar/}+${cliente.id}">
+                        <button type="button" class="btn btn-danger">Eliminar</button>
+                    </a>
+                </td>
             </tr>
             </tbody>
         </table>
