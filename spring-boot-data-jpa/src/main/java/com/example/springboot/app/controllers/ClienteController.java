@@ -2,7 +2,11 @@ package com.example.springboot.app.controllers;
 
 import com.example.springboot.app.dao.services.ClienteService;
 import com.example.springboot.app.models.entity.Cliente;
+import com.example.springboot.app.util.paginator.PageRender;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,13 +24,33 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
-    @GetMapping(value="/listar")
+
+    //Método para mostrar todos los resultado sin paginación
+    /*@GetMapping(value="/listar")
     public String listar(Model model){
         model.addAttribute("titulo","Listado de clientes");
         model.addAttribute("clientes",clienteService.findAll());
 
         return "listar";
+    }*/
+
+    //método para mostrar los registros pero paginados
+    @GetMapping(value="/listar")
+    public String listar(@RequestParam(name="page", defaultValue = "0") int page, Model model){
+        //Le estamos diciendo que muestre 4 registros por página
+        Pageable pageRequest = PageRequest.of(page,5);
+
+        Page<Cliente> clientes = clienteService.findAll(pageRequest);
+
+        PageRender<Cliente> pageRender = new PageRender<>("/listar",clientes);
+
+        model.addAttribute("titulo","Listado de clientes");
+        model.addAttribute("clientes",clientes);
+        model.addAttribute("page",pageRender);
+
+        return "listar";
     }
+
 
     @GetMapping(value = "/form")
     public String crear(Map<String,Object> model){

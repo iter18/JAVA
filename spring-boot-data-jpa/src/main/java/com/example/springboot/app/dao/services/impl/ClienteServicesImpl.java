@@ -4,6 +4,8 @@ import com.example.springboot.app.dao.repositorys.ClienteDao;
 import com.example.springboot.app.dao.services.ClienteService;
 import com.example.springboot.app.models.entity.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,12 @@ public class ClienteServicesImpl implements ClienteService {
     @Transactional(readOnly = true)
     public List<Cliente> findAll() {
         return (List<Cliente>) clienteDao.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public Page<Cliente> findAll(Pageable pageable) {
+        return clienteDao.findAll(pageable);
     }
 
     @Override
