@@ -42,6 +42,8 @@ public class Cliente implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createAt;
 
+    private String foto;
+
     /*
     * La etiqueta PrePersist sirve para realizar una accion en el entity Manager antes de que persista o se guarde
     * los datos dentro del entity para realizar una acción
