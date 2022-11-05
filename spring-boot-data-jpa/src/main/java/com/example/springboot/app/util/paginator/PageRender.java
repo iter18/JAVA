@@ -11,7 +11,7 @@ public class PageRender<T>{
     private String url;
     private Page<T> page;
 
-    private int totoalPaginas;
+    private int totalPaginas;
 
     private int numElementosPorPagina;
 
@@ -19,12 +19,44 @@ public class PageRender<T>{
 
     private List<PageItem> paginas;
 
+    public PageRender(String url, Page<T> page) {
+        this.url = url;
+        this.page = page;
+        this.paginas = new ArrayList<PageItem>();
+
+        numElementosPorPagina = page.getSize();
+        totalPaginas = page.getTotalPages();
+        paginaActual = page.getNumber()+1;
+
+        int desde,hasta;
+        //Proceso para calcular rango de paginación en base a los registros a mostrar
+        if(totalPaginas<=numElementosPorPagina){
+            desde = 1;
+            hasta =totalPaginas;
+        }else {
+            if(paginaActual<=numElementosPorPagina/2){
+                desde =1;
+                hasta = numElementosPorPagina;
+            } else if (paginaActual>=totalPaginas - numElementosPorPagina/2) {
+                desde = totalPaginas - numElementosPorPagina+1;
+                hasta = numElementosPorPagina;
+            }else {
+                desde = paginaActual - numElementosPorPagina/2;
+                hasta = numElementosPorPagina;
+            }
+        }
+        //proceso para llenar las paginas con los rangos
+        for (int i=0; i< hasta; i++){
+            paginas.add(new PageItem(desde+i,paginaActual == desde+i));
+        }
+    }
+
     public String getUrl() {
         return url;
     }
 
-    public int getTotoalPaginas() {
-        return totoalPaginas;
+    public int getTotalPaginas() {
+        return totalPaginas;
     }
 
     public int getPaginaActual() {
@@ -35,36 +67,7 @@ public class PageRender<T>{
         return paginas;
     }
 
-    public PageRender(String url, Page<T> page) {
-        this.url = url;
-        this.page = page;
-        this.paginas = new ArrayList<PageItem>();
 
-        numElementosPorPagina = page.getSize();
-        totoalPaginas = page.getTotalPages();
-
-        int desde,hasta;
-        //Proceso para calcular rango de paginación en base a los registros a mostrar
-        if(totoalPaginas<=numElementosPorPagina){
-            desde = 1;
-            hasta =totoalPaginas;
-        }else {
-            if(paginaActual<=numElementosPorPagina/2){
-                desde =1;
-                hasta = numElementosPorPagina;
-            } else if (paginaActual>=totoalPaginas - numElementosPorPagina/2) {
-                desde = totoalPaginas- numElementosPorPagina+1;
-                hasta = numElementosPorPagina;
-            }else {
-                desde = paginaActual-numElementosPorPagina/2;
-                hasta = numElementosPorPagina;
-            }
-        }
-        //proceso para llenar las paginas con los rangos
-        for (int i=0; i< hasta; i++){
-            paginas.add(new PageItem(desde+i,paginaActual == desde+i));
-        }
-    }
     //Metodos para saber el estado de la paginación
     public boolean isFirst(){
         return page.isFirst();
