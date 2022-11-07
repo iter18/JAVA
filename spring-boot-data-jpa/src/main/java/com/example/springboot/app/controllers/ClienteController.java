@@ -12,9 +12,14 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 @Controller
@@ -61,11 +66,36 @@ public class ClienteController {
     }
 
     @PostMapping(value="/form")
-    public String guardar(@Valid Cliente cliente, BindingResult result, Model model, RedirectAttributes flash, SessionStatus status){
+    public String guardar(@Valid Cliente cliente, BindingResult result, Model model, @RequestParam("file") MultipartFile foto, RedirectAttributes flash, SessionStatus status){
         if(result.hasErrors()){
             model.addAttribute("titulo","Formulario cliente");
             return "form";
         }
+
+        if(!foto.isEmpty()){
+            //Obtenos la ruta del directorio donde se almaceneran las imágenes
+            //Path directorioRecursos = Paths.get("C://Spring5//workspace//JAVA//spring-boot-data-jpa//src//main//resources//static//uploads");
+            Path directorioRecursos = Paths.get("src//main//resources//static//uploads");
+            //Convertimos la ruta a string para poder manipular la ruta con el archivo para poder almacenar
+            String rootPath = directorioRecursos.toFile().getAbsolutePath();
+            try{
+                //obtenemos los bytes del archivo
+                byte[] bytes = foto.getBytes();
+                //obtenemos el nombre original del archivo y lo concatenamos con la ruta string del directorio
+                Path rutaCompleta = Paths.get(rootPath+"//"+foto.getOriginalFilename());
+                //creamos el archivo en le directorio especificado
+                Files.write(rutaCompleta,bytes);
+                //mensaje
+                flash.addFlashAttribute("info", "Has subido correctamente '"+foto.getOriginalFilename()+"'");
+                //setteo de nombre la foto para que se alamacene en el DB
+                cliente.setFoto(foto.getOriginalFilename());
+
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+
+        }
+
         String mensaje = cliente.getId()!=null ? "Cliente editado con éxisto" : "Cliente creado con éxito!";
         clienteService.save(cliente);
         status.setComplete();
