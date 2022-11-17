@@ -39,6 +39,21 @@ public class ClienteController {
         return "listar";
     }*/
 
+    //Método para ver el detalle de un cliente
+    @GetMapping(value = "/ver/{id}")
+    public String ver(@PathVariable("id")Long id,
+                      Map<String,Object> model,
+                      RedirectAttributes flash){
+        Cliente cliente = clienteService.findById(id);
+        if(cliente==null){
+            flash.addFlashAttribute("error","El cliente no existe en la base de datos");
+            return "redirect:/listar";
+        }
+        model.put("cliente",cliente);
+        model.put("titulo","Detalle del cliente: "+cliente.getNombre());
+        return "ver";
+    }
+
     //método para mostrar los registros pero paginados
     @GetMapping(value="/listar")
     public String listar(@RequestParam(name="page", defaultValue = "0") int page, Model model){
