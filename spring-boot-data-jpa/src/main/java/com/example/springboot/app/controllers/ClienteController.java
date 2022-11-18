@@ -90,9 +90,10 @@ public class ClienteController {
         if(!foto.isEmpty()){
             //Obtenos la ruta del directorio donde se almaceneran las imágenes
             //Path directorioRecursos = Paths.get("C://Spring5//workspace//JAVA//spring-boot-data-jpa//src//main//resources//static//uploads");
-            Path directorioRecursos = Paths.get("src//main//resources//static//uploads");
+            //Esto es para guardar las imagenes dentro del proyecto->Path directorioRecursos = Paths.get("src//main//resources//static//uploads");
             //Convertimos la ruta a string para poder manipular la ruta con el archivo para poder almacenar
-            String rootPath = directorioRecursos.toFile().getAbsolutePath();
+            //Form parte para guardar las imgenes dentro del proyectoString rootPath = directorioRecursos.toFile().getAbsolutePath();
+            String rootPath = "C://Temp//uploads";
             try{
                 //obtenemos los bytes del archivo
                 byte[] bytes = foto.getBytes();
