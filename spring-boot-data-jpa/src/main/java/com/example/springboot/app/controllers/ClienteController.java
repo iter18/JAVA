@@ -3,6 +3,7 @@ package com.example.springboot.app.controllers;
 import com.example.springboot.app.dao.services.ClienteService;
 import com.example.springboot.app.models.entity.Cliente;
 import com.example.springboot.app.util.paginator.PageRender;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,9 +22,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.UUID;
 
 @Controller
 @SessionAttributes("cliente")
+@Slf4j
 public class ClienteController {
 
     @Autowired
@@ -93,18 +96,34 @@ public class ClienteController {
             //Esto es para guardar las imagenes dentro del proyecto->Path directorioRecursos = Paths.get("src//main//resources//static//uploads");
             //Convertimos la ruta a string para poder manipular la ruta con el archivo para poder almacenar
             //Form parte para guardar las imgenes dentro del proyectoString rootPath = directorioRecursos.toFile().getAbsolutePath();
-            String rootPath = "C://Temp//uploads";
+
+            //Esta forma esta para almacenar files fuera del proyecto en un ruta estatica dentro de nuestro ordenador
+            //String rootPath = "C://Temp//uploads";
+
+            //Esta forma es para alamacenar files dentro de nuestro proyecto pero en la raíz
+            //Obtenemos un nombre disitinto para renombrar la foto
+            String uniqueFilename = UUID.randomUUID().toString()+ "_"+foto.getOriginalFilename();
+            //resolve de manera auotmática concatena el nombre del archivo
+            Path rootPath = Paths.get("uploads").resolve(uniqueFilename);
+            //Obtenemos la ruta absoluta del directorio donde alamacenaremos los files
+            Path rootAbsolutePath = rootPath.toAbsolutePath();
+            log.info("rootPath: "+rootPath);
+            log.info("rootPathAbsolute: "+ rootAbsolutePath);
             try{
                 //obtenemos los bytes del archivo
                 byte[] bytes = foto.getBytes();
+                /** Esta es una forma de hacrlo **/
                 //obtenemos el nombre original del archivo y lo concatenamos con la ruta string del directorio
-                Path rutaCompleta = Paths.get(rootPath+"//"+foto.getOriginalFilename());
+                //Path rutaCompleta = Paths.get(rootPath+"//"+foto.getOriginalFilename());
                 //creamos el archivo en le directorio especificado
-                Files.write(rutaCompleta,bytes);
+                //Files.write(rutaCompleta,bytes);
+                /** Esta es otra manera de hacerlo con Files.copy**/
+                //Copiamos el archivo al directorio
+                Files.copy(foto.getInputStream(),rootAbsolutePath);
                 //mensaje
-                flash.addFlashAttribute("info", "Has subido correctamente '"+foto.getOriginalFilename()+"'");
+                flash.addFlashAttribute("info", "Has subido correctamente '"+uniqueFilename+"'");
                 //setteo de nombre la foto para que se alamacene en el DB
-                cliente.setFoto(foto.getOriginalFilename());
+                cliente.setFoto(uniqueFilename);
 
             }catch (IOException e){
                 e.printStackTrace();
