@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 @Slf4j
 public class MvcConfig implements WebMvcConfigurer {
     //Es para agregar recursos estaticos, como directorios etc.
-    @Override
+   /* @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         WebMvcConfigurer.super.addResourceHandlers(registry);
 
@@ -25,5 +25,5 @@ public class MvcConfig implements WebMvcConfigurer {
                 //.addResourceLocations("file:/C:/Temp/uploads/");
                 .addResourceLocations(resourcePath);
 
-    }
+    }*/
 }
