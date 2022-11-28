@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
@@ -37,6 +38,8 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
+    private final static String  UPLOADS_FOLDER = "uploads";
+
 
     //Método para mostrar todos los resultado sin paginación
     /*@GetMapping(value="/listar")
@@ -50,7 +53,7 @@ public class ClienteController {
     //al final la expresión.+ es para indicar que se tome en cuanta el archivo
     @GetMapping(value="/uploads/{filename:.+}")
     public ResponseEntity<Resource> verFoto(@PathVariable String filename) {
-        Path pathFoto = Paths.get("uploads").resolve(filename).toAbsolutePath();
+        Path pathFoto = Paths.get(UPLOADS_FOLDER).resolve(filename).toAbsolutePath();
         log.info("pathFoto: "+pathFoto);
         Resource recurso = null;
         try {
@@ -124,18 +127,30 @@ public class ClienteController {
             //Esta forma esta para almacenar files fuera del proyecto en un ruta estatica dentro de nuestro ordenador
             //String rootPath = "C://Temp//uploads";
 
+
+
+            //Proceso para reemplazar foto cuando se edita
+            if(cliente.getId() != null && cliente.getId()>0 && cliente.getFoto()!=null && cliente.getFoto().length() > 0){
+                Path rootPath = Paths.get(UPLOADS_FOLDER).resolve(cliente.getFoto()).toAbsolutePath();
+                File archivo = rootPath.toFile();
+
+                if(archivo.exists() && archivo.canRead()){
+                    archivo.delete();
+                }
+            }
             //Esta forma es para alamacenar files dentro de nuestro proyecto pero en la raíz
             //Obtenemos un nombre disitinto para renombrar la foto
             String uniqueFilename = UUID.randomUUID().toString()+ "_"+foto.getOriginalFilename();
             //resolve de manera auotmática concatena el nombre del archivo
-            Path rootPath = Paths.get("uploads").resolve(uniqueFilename);
+            Path rootPath = Paths.get(UPLOADS_FOLDER).resolve(uniqueFilename);
             //Obtenemos la ruta absoluta del directorio donde alamacenaremos los files
             Path rootAbsolutePath = rootPath.toAbsolutePath();
             log.info("rootPath: "+rootPath);
             log.info("rootPathAbsolute: "+ rootAbsolutePath);
+
             try{
                 //obtenemos los bytes del archivo
-                byte[] bytes = foto.getBytes();
+                //byte[] bytes = foto.getBytes();
                 /** Esta es una forma de hacrlo **/
                 //obtenemos el nombre original del archivo y lo concatenamos con la ruta string del directorio
                 //Path rutaCompleta = Paths.get(rootPath+"//"+foto.getOriginalFilename());
@@ -179,10 +194,19 @@ public class ClienteController {
 
     @RequestMapping(value="/eliminar/{id}")
     public String eliminar(@PathVariable("id") Long id,RedirectAttributes flash){
-        Cliente cliente = null;
         if(id>0){
+           Cliente cliente = clienteService.findById(id);
             clienteService.delete(id);
             flash.addFlashAttribute("info","Cliente eliminado con éxito!");
+
+            Path rootPath = Paths.get(UPLOADS_FOLDER).resolve(cliente.getFoto()).toAbsolutePath();
+            File archivo = rootPath.toFile();
+
+            if(archivo.exists() && archivo.canRead()){
+                if (archivo.delete()){
+                    flash.addFlashAttribute("info","Foto "+cliente.getFoto()+"eliminada con exito!");
+                }
+            }
         }
 
         return "redirect:/listar";
