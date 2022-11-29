@@ -12,6 +12,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -43,6 +44,16 @@ public class Cliente implements Serializable {
     private Date createAt;
 
     private String foto;
+
+    @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Factura> facturas;
+
+
+    //ES una forma de poblar la lista de facturas
+    public void addFactura(Factura factura){
+        facturas.add(factura);
+    }
+
 
     /*
     * La etiqueta PrePersist sirve para realizar una accion en el entity Manager antes de que persista o se guarde
