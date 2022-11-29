@@ -25,3 +25,14 @@ INSERT INTO clientes (id,nombre,apellido,email,create_at,foto) VALUES (22,'Gonza
 INSERT INTO clientes (id,nombre,apellido,email,create_at,foto) VALUES (23,'Maritza','Padilla','mpg@gmail.com','2022-11-04','');
 INSERT INTO clientes (id,nombre,apellido,email,create_at,foto) VALUES (24,'Ana esther','Garcia','agr@gmail.com','2022-11-04','');
 INSERT INTO clientes (id,nombre,apellido,email,create_at,foto) VALUES (25,'Martha Shantal','Diaztoris','msd@gmail.com','2022-11-04','');
+
+
+/* insercion de productos*/
+
+INSERT INTO productos (nombre, precio, create_at) VALUES ('Panasonic Pantalla LCD',15535,NOW());
+INSERT INTO productos (nombre, precio, create_at) VALUES ('Sony Camara digital',5046,NOW());
+INSERT INTO productos (nombre, precio, create_at) VALUES ('Apple iPod shuffle',20568,NOW());
+INSERT INTO productos (nombre, precio, create_at) VALUES ('Dell Presicion M4800',30564,NOW());
+INSERT INTO productos (nombre, precio, create_at) VALUES ('Multifuncional HP',17000,NOW());
+INSERT INTO productos (nombre, precio, create_at) VALUES ('Samsung S10 plus',18598,NOW());
+INSERT INTO productos (nombre, precio, create_at) VALUES ('AP linksys',8698,NOW());
