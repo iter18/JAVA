@@ -14,7 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.CascadeType;
 import javax.persistence.FetchType;
 @Getter
 @Setter
@@ -39,4 +43,22 @@ public class Factura implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Cliente cliente;
+
+    @JoinColumn(name = "factura_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ItemFactura> itemsFactura;
+
+    public void addItemsFactura(ItemFactura itemFactura){
+        itemsFactura.add(itemFactura);
+    }
+
+    public Double getTotal(){
+        Double total = 0.0;
+        int size = itemsFactura.size();
+        for (int i=0; i<=size; i++){
+            total+=itemsFactura.get(i).calcularImporte();
+        }
+        return total;
+    }
+
 }
