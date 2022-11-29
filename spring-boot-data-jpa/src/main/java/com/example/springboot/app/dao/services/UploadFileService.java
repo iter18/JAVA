@@ -13,4 +13,8 @@ public interface UploadFileService {
 
     //Método para eliminar la imagen
     public boolean delete(String filename);
+
+    void deleteAll();
+
+    void init();
 }

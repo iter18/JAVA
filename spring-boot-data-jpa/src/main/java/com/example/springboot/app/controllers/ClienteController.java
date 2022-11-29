@@ -104,7 +104,6 @@ public class ClienteController {
             return "form";
         }
 
-        if(!foto.isEmpty()){
             //Obtenos la ruta del directorio donde se almaceneran las imágenes
             //Path directorioRecursos = Paths.get("C://Spring5//workspace//JAVA//spring-boot-data-jpa//src//main//resources//static//uploads");
             //Esto es para guardar las imagenes dentro del proyecto->Path directorioRecursos = Paths.get("src//main//resources//static//uploads");
@@ -113,7 +112,6 @@ public class ClienteController {
 
             //Esta forma esta para almacenar files fuera del proyecto en un ruta estatica dentro de nuestro ordenador
             //String rootPath = "C://Temp//uploads";
-
 
 
             //Proceso para reemplazar foto cuando se edita
@@ -126,7 +124,6 @@ public class ClienteController {
             cliente.setFoto(fileName);
 
 
-        }
 
         String mensaje = cliente.getId()!=null ? "Cliente editado con éxisto" : "Cliente creado con éxito!";
         clienteService.save(cliente);

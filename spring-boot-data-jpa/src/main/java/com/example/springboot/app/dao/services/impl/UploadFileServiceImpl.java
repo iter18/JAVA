@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -94,6 +95,21 @@ public class UploadFileServiceImpl implements UploadFileService {
             }
         }
         return elimino;
+    }
+
+    @Override
+    public void deleteAll() {
+        FileSystemUtils.deleteRecursively(Paths.get(UPLOADS_FOLDER).toFile());
+    }
+
+    @Override
+    public void init() {
+        try {
+            Files.createDirectory(Paths.get(UPLOADS_FOLDER));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     public Path getPath(String filename){
