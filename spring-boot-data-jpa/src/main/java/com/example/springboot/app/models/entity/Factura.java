@@ -36,6 +36,7 @@ public class Factura implements Serializable {
     private Long id;
     private String descripcion;
     private String observacion;
+    //private Double total;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "create_at")

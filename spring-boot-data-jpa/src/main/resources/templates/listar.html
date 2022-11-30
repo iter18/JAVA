@@ -36,12 +36,16 @@
                 <td th:text="${cliente.email}"></td>
                 <td th:text="${cliente.createAt}"></td>
                 <td>
+                    <a th:href="@{/factura/form/}+${cliente.id}">
+                        <button type="button" class="btn btn-secondary">Crear Factura</button>
+                    </a>
                     <a th:href="@{/form/}+${cliente.id}">
                         <button type="button" class="btn btn-primary">Editar</button>
                     </a>
                     <a th:href="@{/eliminar/}+${cliente.id}">
                         <button type="button" class="btn btn-danger" onclick="return confirm('Estás seguro de eliminar este registro?');">Eliminar</button>
                     </a>
+
                 </td>
             </tr>
             </tbody>
