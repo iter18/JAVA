@@ -31,6 +31,7 @@
                     <input type="text" name="buscar_producto" id="buscar_producto" class="form-control"/>
                   </div>
                 </div>
+                <table th:replace="factura/plantilla-items :: itemsFactura"></table>
                 <div class="form-group row mb-2">
                   <label class="col-sm-2 col-form-label" th:text="'Descripción'"></label>
                   <div class="col-sm-6">
