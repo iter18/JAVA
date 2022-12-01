@@ -1,6 +1,7 @@
 package com.example.springboot.app.dao.services;
 
 import com.example.springboot.app.models.entity.Cliente;
+import com.example.springboot.app.models.entity.Producto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,5 +19,7 @@ public interface ClienteService {
     Cliente findById(Long id);
 
     void delete(Long id);
+
+    public List<Producto> buscar(String term);
 
 }
