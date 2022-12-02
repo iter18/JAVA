@@ -9,6 +9,7 @@
                 <td>{PRECIO}</td>
                 <td><input type="number" value="1" name="cantidad[]" id="cantidad_{ID}" class="form-control col-sm-4" onchange="itemsHelper.calcularImporte({ID},{PRECIO}, this.value);"/></td>
                 <td><span id="total_importe_{ID}">0</span></td>
+                <td><input type="button" class="btn btn-sm btn-danger" value="X" onclick="itemsHelper.eliminarItem({ID})"></td>
             </tr>
         </tbody>
     </table>

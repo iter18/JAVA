@@ -57,8 +57,10 @@
           let cantidad = $("#cantidad_"+id).val() ? parseInt($("#cantidad_"+id).val()) : 0;
           $("#cantidad_"+id).val(++cantidad);
            this.calcularImporte(id,precio,cantidad);
+      },
+      eliminarItem : function(id){
+          $("#row_"+id).remove();
       }
-
     }
 
   </script>
