@@ -1,10 +1,12 @@
 package com.example.springboot.app.dao.services.impl;
 
 import com.example.springboot.app.dao.repositorys.ClienteDao;
+import com.example.springboot.app.dao.repositorys.FacturaDao;
 import com.example.springboot.app.dao.repositorys.ProductoDao;
 import com.example.springboot.app.dao.repositorys.spec.ProductoSpecification;
 import com.example.springboot.app.dao.services.ClienteService;
 import com.example.springboot.app.models.entity.Cliente;
+import com.example.springboot.app.models.entity.Factura;
 import com.example.springboot.app.models.entity.Producto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,9 @@ public class ClienteServicesImpl implements ClienteService {
 
     @Autowired
     private ProductoDao productoDao;
+
+    @Autowired
+    private FacturaDao facturaDao;
 
 
     @Override
@@ -69,5 +74,20 @@ public class ClienteServicesImpl implements ClienteService {
         }catch (Exception e){
             throw e;
         }
+    }
+
+    @Override
+    @Transactional
+    public void saveFactura(Factura factura) {
+        try {
+                facturaDao.save(factura);
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    @Override
+    public Producto buscarProductoBy(Long id) {
+        return productoDao.findById(id).orElse(null);
     }
 }
