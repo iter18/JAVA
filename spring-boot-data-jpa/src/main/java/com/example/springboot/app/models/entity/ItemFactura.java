@@ -23,9 +23,13 @@ import java.io.Serializable;
 @Table(name="factura_items")
 public class ItemFactura implements Serializable {
 
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private static final long serialVersionUID = 1L;
 
     private Integer cantidad;
 
@@ -39,5 +43,5 @@ public class ItemFactura implements Serializable {
     }
 
 
-    private static final long serialVersionUID = 1L;
+
 }

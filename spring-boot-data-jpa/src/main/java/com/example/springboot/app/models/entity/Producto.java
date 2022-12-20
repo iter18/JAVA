@@ -5,14 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Table;
-import javax.persistence.Column;
-import javax.persistence.TemporalType;
-import javax.persistence.Temporal;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -37,6 +30,11 @@ public class Producto implements Serializable {
     @Temporal(TemporalType.DATE)
     @Column(name = "create_at")
     private Date createAt;
+
+    @PrePersist
+    public void prePersist(){
+        createAt = new Date();
+    }
 
 
 

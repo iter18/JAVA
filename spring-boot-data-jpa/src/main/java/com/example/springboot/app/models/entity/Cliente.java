@@ -1,8 +1,7 @@
 package com.example.springboot.app.models.entity;
 
-import lombok.AllArgsConstructor;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -11,14 +10,13 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "clientes")
 public class Cliente implements Serializable {
 
@@ -36,6 +34,10 @@ public class Cliente implements Serializable {
     @NotEmpty
     @Email
     private String email;
+
+    public Cliente() {
+        facturas = new ArrayList<Factura>();
+    }
 
     @NotNull
     @Column(name = "create_at")

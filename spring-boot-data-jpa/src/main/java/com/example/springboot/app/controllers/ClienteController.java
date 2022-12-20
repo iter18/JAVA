@@ -3,6 +3,9 @@ package com.example.springboot.app.controllers;
 import com.example.springboot.app.dao.services.ClienteService;
 import com.example.springboot.app.dao.services.UploadFileService;
 import com.example.springboot.app.models.entity.Cliente;
+import com.example.springboot.app.models.entity.Factura;
+import com.example.springboot.app.models.entity.ItemFactura;
+import com.example.springboot.app.models.entity.Producto;
 import com.example.springboot.app.util.paginator.PageRender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,4 +165,6 @@ public class ClienteController {
 
         return "redirect:/listar";
     }
+
+
 }
