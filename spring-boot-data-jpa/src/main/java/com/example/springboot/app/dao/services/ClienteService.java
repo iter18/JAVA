@@ -29,4 +29,6 @@ public interface ClienteService {
 
     Factura buscar(Long id);
 
+    void eliminarFactura(Long id);
+
 }
