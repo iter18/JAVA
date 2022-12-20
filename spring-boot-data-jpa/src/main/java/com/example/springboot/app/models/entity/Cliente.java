@@ -3,6 +3,7 @@ package com.example.springboot.app.models.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -17,6 +18,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+//@ToString
 @Table(name = "clientes")
 public class Cliente implements Serializable {
 
@@ -62,5 +64,8 @@ public class Cliente implements Serializable {
     * los datos dentro del entity para realizar una acción
     * */
 
-
+    @Override
+    public String toString() {
+        return  nombre + " "+ apellido;
+    }
 }
