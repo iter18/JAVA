@@ -2,7 +2,7 @@ package com.example.springboot.app.controllers;
 
 import com.example.springboot.app.dao.services.ClienteOptimoService;
 import com.example.springboot.app.dao.services.UploadFileService;
-import com.example.springboot.app.models.entity.Cliente;
+import com.example.springboot.app.models.entity.Client;
 import com.example.springboot.app.util.paginator.PageRender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +24,8 @@ import java.util.Map;
 
 
 @Controller
-@SessionAttributes("cliente")
 @RequestMapping("/cliente")
+@SessionAttributes("client")
 @Slf4j
 public class ClienteOptimoController {
 
@@ -54,12 +54,13 @@ public class ClienteOptimoController {
     public String ver(@PathVariable("id")Long id,
                       Map<String,Object> model,
                       RedirectAttributes flash){
-        Cliente cliente = clienteOptimoService.findById(id);
+        Client cliente = clienteOptimoService.findById(id);
+
         if(cliente==null){
             flash.addFlashAttribute("error","El cliente no existe en la base de datos");
             return "redirect:/listar";
         }
-        model.put("cliente",cliente);
+        model.put("client",cliente);
         model.put("titulo","Detalle del cliente: "+cliente.getNombre());
         return "ver";
     }
@@ -70,9 +71,9 @@ public class ClienteOptimoController {
         //Le estamos diciendo que muestre 4 registros por página
         Pageable pageRequest = PageRequest.of(page,5);
 
-        Page<Cliente> clientes = clienteOptimoService.findAll(pageRequest);
+        Page<Client> clientes = clienteOptimoService.findAll(pageRequest);
 
-        PageRender<Cliente> pageRender = new PageRender<>("/listar",clientes);
+        PageRender<Client> pageRender = new PageRender<>("/listar",clientes);
 
         model.addAttribute("titulo","Listado de clientes");
         model.addAttribute("clientes",clientes);
@@ -84,15 +85,15 @@ public class ClienteOptimoController {
 
     @GetMapping(value = "/form")
     public String crear(Map<String,Object> model){
-        Cliente cliente = new Cliente();
-        model.put("cliente",cliente);
+        Client cliente = new Client();
+        model.put("client",cliente);
         model.put("titulo","Formulario cliente");
         return "form";
     }
 
     //Método para guardar
     @PostMapping(value="/form")
-    public String guardar(@Valid Cliente cliente,
+    public String guardar(@Valid Client cliente,
                           BindingResult result,
                           Model model,
                           @RequestParam("file") MultipartFile foto,
@@ -113,7 +114,7 @@ public class ClienteOptimoController {
 
     @RequestMapping(value="/form/{id}")
     public String editar(@PathVariable("id") Long id, Map<String,Object> model,RedirectAttributes flash){
-        Cliente cliente = null;
+        Client cliente = null;
         if(id>0){
             flash.addFlashAttribute("error","El ID del cliente no existe en la BD!");
             cliente = clienteOptimoService.findById(id);
@@ -121,7 +122,7 @@ public class ClienteOptimoController {
             flash.addFlashAttribute("error","El ID del cliente no puede ser cero!");
             return "redirect:/listar";
         }
-        model.put("cliente",cliente);
+        model.put("client",cliente);
         model.put("titulo","Editar cliente");
         return "form";
     }
@@ -129,7 +130,7 @@ public class ClienteOptimoController {
     @RequestMapping(value="/eliminar/{id}")
     public String eliminar(@PathVariable("id") Long id,RedirectAttributes flash){
         if(id>0){
-            Cliente cliente = clienteOptimoService.findById(id);
+            Client cliente = clienteOptimoService.findById(id);
             clienteOptimoService.delete(id);
             flash.addFlashAttribute("info","Cliente eliminado con éxito!");
 

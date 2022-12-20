@@ -1,12 +1,12 @@
 package com.example.springboot.app.dao.services.impl;
 
-import com.example.springboot.app.dao.repositorys.ClienteDao;
+import com.example.springboot.app.dao.repositorys.ClienteOptimoDao;
 import com.example.springboot.app.dao.repositorys.FacturaDao;
 import com.example.springboot.app.dao.repositorys.ProductoDao;
 import com.example.springboot.app.dao.repositorys.spec.ProductoSpecification;
 import com.example.springboot.app.dao.services.ClienteOptimoService;
 import com.example.springboot.app.dao.services.UploadFileService;
-import com.example.springboot.app.models.entity.Cliente;
+import com.example.springboot.app.models.entity.Client;
 import com.example.springboot.app.models.entity.Factura;
 import com.example.springboot.app.models.entity.Producto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import java.util.List;
 public class ClienteOptimoServiceImpl implements ClienteOptimoService {
 
     @Autowired
-    private ClienteDao clienteDao;
+    private ClienteOptimoDao clienteDao;
 
     @Autowired
     private ProductoDao productoDao;
@@ -38,19 +38,19 @@ public class ClienteOptimoServiceImpl implements ClienteOptimoService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Cliente> findAll() {
-        return (List<Cliente>) clienteDao.findAll();
+    public List<Client> findAll() {
+        return (List<Client>) clienteDao.findAll();
     }
 
     @Transactional(readOnly = true)
     @Override
-    public Page<Cliente> findAll(Pageable pageable) {
+    public Page<Client> findAll(Pageable pageable) {
         return clienteDao.findAll(pageable);
     }
 
     @Override
     @Transactional
-    public void guardar(Cliente cliente, MultipartFile file) {
+    public void guardar(Client cliente, MultipartFile file) {
         try {
             //Proceso para reemplazar foto cuando se edita
             if(cliente.getId() != null && cliente.getId()>0 && cliente.getFoto()!=null && cliente.getFoto().length() > 0){
@@ -68,7 +68,7 @@ public class ClienteOptimoServiceImpl implements ClienteOptimoService {
 
     @Override
     @Transactional(readOnly = true)
-    public Cliente findById(Long id) {
+    public Client findById(Long id) {
         return clienteDao.findById(id).orElse(null);
     }
 

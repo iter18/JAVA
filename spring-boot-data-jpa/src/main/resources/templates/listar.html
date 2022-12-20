@@ -14,7 +14,8 @@
     <div th:replace="components/navBar :: navbar"></div>
     <div class="container text-center">
         <h1 class="text-secondary border border-success border-top-0 border-end-0 border-start-0 shadow-sm p-3 mb-5 bg-body" th:text="${titulo}"></h1>
-        <a th:href="@{/form}"><button type="button" class="btn btn-primary">Crear Cliente</button></a>
+        <!--<a th:href="@{/form}"><button type="button" class="btn btn-primary">Crear Cliente</button></a>-->
+        <a th:href="@{/cliente/form}"><button type="button" class="btn btn-primary">Crear Cliente</button></a>
         <table class="table table-striped text-center">
             <thead>
             <tr>
@@ -39,7 +40,7 @@
                     <a th:href="@{/factura/form/}+${cliente.id}">
                         <button type="button" class="btn btn-secondary">Crear Factura</button>
                     </a>
-                    <a th:href="@{/form/}+${cliente.id}">
+                    <a th:href="@{/cliente/form/}+${cliente.id}">
                         <button type="button" class="btn btn-primary">Editar</button>
                     </a>
                     <a th:href="@{/eliminar/}+${cliente.id}">

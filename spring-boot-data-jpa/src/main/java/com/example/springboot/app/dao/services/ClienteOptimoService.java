@@ -1,24 +1,23 @@
 package com.example.springboot.app.dao.services;
 
-import com.example.springboot.app.models.entity.Cliente;
+import com.example.springboot.app.models.entity.Client;
 import com.example.springboot.app.models.entity.Factura;
 import com.example.springboot.app.models.entity.Producto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
 public interface ClienteOptimoService {
-    List<Cliente> findAll();
+    List<Client> findAll();
 
     //método para listar todos los registros pero con paginación
-    Page<Cliente> findAll(Pageable pageable);
+    Page<Client> findAll(Pageable pageable);
 
-    void guardar(Cliente cliente, MultipartFile file);
+    void guardar(Client cliente, MultipartFile file);
 
-    Cliente findById(Long id);
+    Client findById(Long id);
 
     void delete(Long id);
 
