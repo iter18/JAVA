@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,6 +25,7 @@ public class Factura implements Serializable {
     private Long id;
     private static final long serialVersionUID = 1L;
 
+    @NotEmpty
     private String descripcion;
     private String observacion;
     //private Double total;
