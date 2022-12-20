@@ -90,4 +90,9 @@ public class ClienteServicesImpl implements ClienteService {
     public Producto buscarProductoBy(Long id) {
         return productoDao.findById(id).orElse(null);
     }
+
+    @Override
+    public Factura buscar(Long id) {
+        return facturaDao.findById(id).orElse(null);
+    }
 }

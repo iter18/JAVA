@@ -27,4 +27,6 @@ public interface ClienteService {
 
     public Producto buscarProductoBy(Long id);
 
+    Factura buscar(Long id);
+
 }
