@@ -20,6 +20,7 @@
                     <div class="d-grid">
                         <button class="btn" style="background: #6bb23e;color: #fff;font-weight: bold;" type="submit">Ingresar</button>
                     </div>
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
                 </form>
             </div>
         </div>
