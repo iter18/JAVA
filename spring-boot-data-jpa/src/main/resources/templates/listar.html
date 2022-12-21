@@ -30,7 +30,8 @@
             <tbody>
             <tr th:each="cliente : ${clientes}">
                 <td>
-                 <a class="btn btn-primary btn-sm" th:href="@{/ver/} + ${cliente.id}" th:text="${cliente.id}"></a>
+                 <!--<a class="btn btn-primary btn-sm" th:href="@{/ver/} + ${cliente.id}" th:text="${cliente.id}"></a>-->
+                    <a class="btn btn-primary btn-sm" th:href="@{/cliente/ver/} + ${cliente.id}" th:text="${cliente.id}"></a>
                 </td>
                 <td th:text="${cliente.nombre}"></td>
                 <td th:text="${cliente.apellido}"></td>
@@ -40,9 +41,11 @@
                     <a th:href="@{/factura/form/}+${cliente.id}">
                         <button type="button" class="btn btn-secondary">Crear Factura</button>
                     </a>
+                    <!--<a th:href="@{/form/}+${cliente.id}">-->
                     <a th:href="@{/cliente/form/}+${cliente.id}">
                         <button type="button" class="btn btn-primary">Editar</button>
                     </a>
+                    <!--<a th:href="@{/eliminar/}+${cliente.id}">-->
                     <a th:href="@{/cliente/eliminar/}+${cliente.id}">
                         <button type="button" class="btn btn-danger" onclick="return confirm('Estás seguro de eliminar este registro?');">Eliminar</button>
                     </a>
