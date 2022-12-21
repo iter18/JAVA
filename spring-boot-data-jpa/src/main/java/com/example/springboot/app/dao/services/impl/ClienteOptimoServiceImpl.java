@@ -74,8 +74,26 @@ public class ClienteOptimoServiceImpl implements ClienteOptimoService {
 
     @Override
     @Transactional
-    public void delete(Long id) {
-        clienteDao.deleteById(id);
+    public Boolean delete(Long id) {
+        Boolean respuesta = false;
+        try {
+            if(id>0 || id != null){
+                Client cliente = this.findById(id);
+                boolean resp = uploadFileService.delete(cliente.getFoto());
+                if (resp){
+                    clienteDao.deleteById(id);
+                    respuesta =  true;
+                }else{
+                    respuesta = false;
+                }
+            }else{
+                respuesta = false;
+            }
+        }catch (Exception e){
+            throw e;
+        }
+
+        return respuesta;
     }
 
     @Override

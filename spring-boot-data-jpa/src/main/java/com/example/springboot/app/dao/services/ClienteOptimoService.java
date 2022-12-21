@@ -19,7 +19,7 @@ public interface ClienteOptimoService {
 
     Client findById(Long id);
 
-    void delete(Long id);
+    Boolean delete(Long id);
 
     public List<Producto> buscar(String term);
 

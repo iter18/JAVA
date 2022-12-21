@@ -129,17 +129,10 @@ public class ClienteOptimoController {
 
     @RequestMapping(value="/eliminar/{id}")
     public String eliminar(@PathVariable("id") Long id,RedirectAttributes flash){
-        if(id>0){
-            Client cliente = clienteOptimoService.findById(id);
-            clienteOptimoService.delete(id);
-            flash.addFlashAttribute("info","Cliente eliminado con éxito!");
-
-            boolean respuesta = uploadFileService.delete(cliente.getFoto());
+        boolean respuesta = clienteOptimoService.delete(id);
             if (respuesta){
-                flash.addFlashAttribute("info","Foto "+cliente.getFoto()+"eliminada con exito!");
+                flash.addFlashAttribute("info","Datos eliminados por completo exitosamente!");
             }
-        }
-
         return "redirect:/listar";
     }
 
