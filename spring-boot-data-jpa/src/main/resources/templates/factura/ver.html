@@ -8,6 +8,7 @@
       <div class="card-header" th:text="${titulo}"></div>
       <div class="card-body">
         <h4 class="card-title">
+          <!--<a th:href="@{/ver/}+${factura.cliente.id}">-->
           <a th:href="@{/cliente/ver/}+${factura.cliente.id}">
             <button type="button" class="btn btn-secondary">&laquo;Regresar</button>
           </a>
@@ -37,7 +38,8 @@
               <td th:text="${item.producto.nombre}"></td>
               <td th:text="${item.producto.precio}"></td>
               <td th:text="${item.cantidad}"></td>
-              <td th:text="${item.calcularImporte()}"></td>
+              <!--<td th:text="${item.calcularImporte()}"></td>-->
+              <td th:text="${item.importe}"></td>
             </tr>
           </tbody>
         </table>

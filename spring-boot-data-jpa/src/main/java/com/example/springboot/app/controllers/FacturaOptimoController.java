@@ -1,7 +1,6 @@
 package com.example.springboot.app.controllers;
 
 import com.example.springboot.app.dao.services.ClienteOptimoService;
-import com.example.springboot.app.dao.services.ClienteService;
 import com.example.springboot.app.models.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class FacturaOptimoController {
 
         if(factura == null){
             flash.addFlashAttribute("error","La factura no existe, verifique e intente nuevamente");
-            return "redirect:/listar";
+            return "redirect:/cliente/listar";
         }
         model.addAttribute("factura",factura);
         model.addAttribute("titulo","Factua: ".concat(factura.getDescripcion()));
@@ -94,9 +93,9 @@ public class FacturaOptimoController {
         if(factura!=null){
             clienteService.eliminarFactura(id);
             flash.addFlashAttribute("success","Factura eliminada con éxito!");
-            return "redirect:/ver/"+factura.getCliente().getId();
+            return "redirect:/cliente/ver/"+factura.getCliente().getId();
         }
         flash.addFlashAttribute("error","La factura no existe, verifique e intente nuevamente");
-        return "redirect:/listar";
+        return "redirect:/cliente/listar";
     }
 }
