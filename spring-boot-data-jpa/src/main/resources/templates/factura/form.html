@@ -8,15 +8,18 @@
             <div class="card-header" th:text="${titulo}"></div>
             <div class="card-body">
               <h4 class="card-title">
-                <a th:href="@{/ver/}+${factura.cliente.id}">
+                <!--<a th:href="@{/ver/}+${factura.cliente.id}">-->
+                <a th:href="@{/ver/}+${invoice.cliente.id}">
                   <button type="button" class="btn btn-secondary">&laquo;Regresar</button>
                 </a>
               </h4>
-              <form th:action="@{/factura/form/}" th:object="${factura}" method="post">
+              <!--<form th:action="@{/factura/form/}" th:object="${factura}" method="post">-->
+              <form th:action="@{/facturaOptimo/form/}" th:object="${invoice}" method="post">
                 <div class="form-group row mb-2">
                   <label class="col-sm-2 col-form-label" th:text="'Cliente'"></label>
                   <div class="col-sm-6">
-                    <input th:value="${factura.cliente.nombre}+ ' '+ ${factura.cliente.apellido}" class="form-control" disabled="disabled" />
+                    <!--<input th:value="${factura.cliente.nombre}+ ' '+ ${factura.cliente.apellido}" class="form-control" disabled="disabled" />-->
+                    <input th:value="${invoice.cliente.nombre}+ ' '+ ${invoice.cliente.apellido}" class="form-control" disabled="disabled" />
                   </div>
                 </div>
                 <div class="form-group row mb-2">

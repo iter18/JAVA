@@ -6,7 +6,7 @@
         $("#buscar_producto").autocomplete({
             source: function(request, response){
                 $.ajax({
-                    url: "/factura/cargar-productos/"+ request.term,
+                    url: "/facturaOptimo/cargar-productos/"+ request.term,
                     dataType: "json",
                     data: {term: request.term},
                     success: function(data){

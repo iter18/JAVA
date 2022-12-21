@@ -1,14 +1,13 @@
 package com.example.springboot.app.dao.services.impl;
 
 import com.example.springboot.app.dao.repositorys.ClienteOptimoDao;
-import com.example.springboot.app.dao.repositorys.FacturaDao;
+import com.example.springboot.app.dao.repositorys.InvoiceDao;
 import com.example.springboot.app.dao.repositorys.ProductoDao;
 import com.example.springboot.app.dao.repositorys.spec.ProductoSpecification;
 import com.example.springboot.app.dao.services.ClienteOptimoService;
 import com.example.springboot.app.dao.services.UploadFileService;
-import com.example.springboot.app.models.entity.Client;
-import com.example.springboot.app.models.entity.Factura;
-import com.example.springboot.app.models.entity.Producto;
+import com.example.springboot.app.models.entity.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,9 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ClienteOptimoServiceImpl implements ClienteOptimoService {
 
     @Autowired
@@ -30,7 +34,7 @@ public class ClienteOptimoServiceImpl implements ClienteOptimoService {
     private ProductoDao productoDao;
 
     @Autowired
-    private FacturaDao facturaDao;
+    private InvoiceDao facturaDao;
 
     @Autowired
     private UploadFileService uploadFileService;
@@ -99,14 +103,9 @@ public class ClienteOptimoServiceImpl implements ClienteOptimoService {
     @Override
     public List<Producto> buscar(String term) {
         try {
-            //Método para buscar por query escribir consulta en repository
-            //List<Producto> productoList = productoDao.buscar(term);
-            //Método para buscar por método jpa en repository sin consulta
-            //List<Producto> productoList = productoDao.findByNombreLikeIgnoreCase("%"+term+"%");
-            //Método para hacerlo por Specification
-            Specification<Producto> filtro = ProductoSpecification.nombreLike(term);
-            List<Producto> productoList = productoDao.findAll(filtro);
-            return productoList;
+                Specification<Producto> filtro = ProductoSpecification.nombreLike(term);
+                List<Producto> productoList = productoDao.findAll(filtro);
+                return productoList;
         }catch (Exception e){
             throw e;
         }
@@ -114,9 +113,28 @@ public class ClienteOptimoServiceImpl implements ClienteOptimoService {
 
     @Override
     @Transactional
-    public void saveFactura(Factura factura) {
+    public void saveFactura(Invoice factura,List<Long> productoId,List<Integer>cantidad) {
         try {
-            facturaDao.save(factura);
+
+                AtomicInteger i = new AtomicInteger();
+                List<ItemInvoice> itemInvoiceList =  productoId.stream().map(productos -> {
+                    Double importe = 0.0;
+
+                    Producto producto = this.buscarProductoBy(productos);
+                    ItemInvoice itemInvoice = new ItemInvoice();
+                    itemInvoice.setCantidad(cantidad.get(i.get()));
+                    itemInvoice.setProducto(producto);
+                    importe = cantidad.get(i.get())*producto.getPrecio();
+                    itemInvoice.setImporte(importe);
+                    i.set(i.get() + 1);
+                    return  itemInvoice;
+                }).collect(Collectors.toList());
+
+                factura.setItemsFactura(itemInvoiceList);
+                Double total = itemInvoiceList.stream().mapToDouble(item-> item.getImporte()).sum();
+                factura.setTotal(total);
+                factura.setCreateAt(new Date());
+                facturaDao.save(factura);
         }catch (Exception e){
             throw e;
         }
@@ -128,7 +146,7 @@ public class ClienteOptimoServiceImpl implements ClienteOptimoService {
     }
 
     @Override
-    public Factura buscar(Long id) {
+    public Invoice buscar(Long id) {
         return facturaDao.findById(id).orElse(null);
     }
 
@@ -136,5 +154,20 @@ public class ClienteOptimoServiceImpl implements ClienteOptimoService {
     @Override
     public void eliminarFactura(Long id) {
         facturaDao.deleteById(id);
+    }
+
+    @Override
+    public Invoice crearFactura(Long id) {
+        try {
+            Client cliente = this.findById(id);
+            if(cliente == null){
+                return null;
+            }
+            Invoice factura = new Invoice();
+            factura.setCliente(cliente);
+            return factura;
+        }catch (Exception e){
+            throw e;
+        }
     }
 }

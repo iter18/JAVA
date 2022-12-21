@@ -2,6 +2,7 @@ package com.example.springboot.app.dao.services;
 
 import com.example.springboot.app.models.entity.Client;
 import com.example.springboot.app.models.entity.Factura;
+import com.example.springboot.app.models.entity.Invoice;
 import com.example.springboot.app.models.entity.Producto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,12 +24,14 @@ public interface ClienteOptimoService {
 
     public List<Producto> buscar(String term);
 
-    public void saveFactura(Factura factura);
+    public void saveFactura(Invoice factura,List<Long> productoId,List<Integer> cantidad);
 
     public Producto buscarProductoBy(Long id);
 
-    Factura buscar(Long id);
+    Invoice buscar(Long id);
 
     void eliminarFactura(Long id);
+
+    Invoice crearFactura(Long id);
 
 }
