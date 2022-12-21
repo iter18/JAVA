@@ -85,7 +85,7 @@ public class FacturaOptimoController {
 
         flash.addFlashAttribute("success","Factura creada con éxito!");
 
-        return "redirect:/ver/"+factura.getCliente().getId();
+        return "redirect:/cliente/ver/"+factura.getCliente().getId();
     }
 
     @GetMapping("/eliminar/{id}")
