@@ -58,7 +58,7 @@ public class ClienteOptimoController {
 
         if(cliente==null){
             flash.addFlashAttribute("error","El cliente no existe en la base de datos");
-            return "redirect:/listar";
+            return "redirect:/cliente/listar";
         }
         model.put("client",cliente);
         model.put("titulo","Detalle del cliente: "+cliente.getNombre());
@@ -66,14 +66,14 @@ public class ClienteOptimoController {
     }
 
     //método para mostrar los registros pero paginados
-    @GetMapping(value="/listar")
+    @GetMapping(value={"/listar","/"})
     public String listar(@RequestParam(name="page", defaultValue = "0") int page, Model model){
         //Le estamos diciendo que muestre 4 registros por página
         Pageable pageRequest = PageRequest.of(page,5);
 
         Page<Client> clientes = clienteOptimoService.findAll(pageRequest);
 
-        PageRender<Client> pageRender = new PageRender<>("/listar",clientes);
+        PageRender<Client> pageRender = new PageRender<>("/cliente/listar",clientes);
 
         model.addAttribute("titulo","Listado de clientes");
         model.addAttribute("clientes",clientes);
@@ -109,7 +109,7 @@ public class ClienteOptimoController {
         clienteOptimoService.guardar(cliente,foto);
         status.setComplete();
         flash.addFlashAttribute("success",mensaje);
-        return "redirect:listar";
+        return "redirect:/cliente/listar";
     }
 
     @RequestMapping(value="/form/{id}")
@@ -120,7 +120,7 @@ public class ClienteOptimoController {
             cliente = clienteOptimoService.findById(id);
         }else{
             flash.addFlashAttribute("error","El ID del cliente no puede ser cero!");
-            return "redirect:/listar";
+            return "redirect:/cliente/listar";
         }
         model.put("client",cliente);
         model.put("titulo","Editar cliente");
@@ -133,7 +133,7 @@ public class ClienteOptimoController {
             if (respuesta){
                 flash.addFlashAttribute("info","Datos eliminados por completo exitosamente!");
             }
-        return "redirect:/listar";
+        return "redirect:/cliente/listar";
     }
 
 
