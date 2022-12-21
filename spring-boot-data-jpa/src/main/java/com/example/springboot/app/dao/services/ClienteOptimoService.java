@@ -30,7 +30,7 @@ public interface ClienteOptimoService {
 
     Invoice buscar(Long id);
 
-    void eliminarFactura(Long id);
+    Invoice eliminarFactura(Long id);
 
     Invoice crearFactura(Long id);
 

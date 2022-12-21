@@ -49,18 +49,6 @@ public class Client implements Serializable {
     @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Factura> facturas;
 
-
-    //ES una forma de poblar la lista de facturas
-    public void addFactura(Factura factura){
-        facturas.add(factura);
-    }
-
-
-    /*
-     * La etiqueta PrePersist sirve para realizar una accion en el entity Manager antes de que persista o se guarde
-     * los datos dentro del entity para realizar una acción
-     * */
-
     @Override
     public String toString() {
         return  nombre + " "+ apellido;

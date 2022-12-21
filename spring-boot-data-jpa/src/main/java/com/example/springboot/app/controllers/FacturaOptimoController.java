@@ -89,9 +89,8 @@ public class FacturaOptimoController {
 
     @GetMapping("/eliminar/{id}")
     public String eliminar(@PathVariable("id")Long id,RedirectAttributes flash){
-        Invoice factura = clienteService.buscar(id);
+        Invoice factura = clienteService.eliminarFactura(id);
         if(factura!=null){
-            clienteService.eliminarFactura(id);
             flash.addFlashAttribute("success","Factura eliminada con éxito!");
             return "redirect:/cliente/ver/"+factura.getCliente().getId();
         }

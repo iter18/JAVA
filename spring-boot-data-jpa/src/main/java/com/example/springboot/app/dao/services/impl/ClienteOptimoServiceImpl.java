@@ -152,8 +152,16 @@ public class ClienteOptimoServiceImpl implements ClienteOptimoService {
 
     @Transactional
     @Override
-    public void eliminarFactura(Long id) {
-        facturaDao.deleteById(id);
+    public Invoice eliminarFactura(Long id) {
+        try {
+            Invoice factura = this.buscar(id);
+            if(factura!=null){
+                facturaDao.deleteById(id);
+            }
+            return factura;
+        }catch (Exception e){
+            throw e;
+        }
     }
 
     @Override
