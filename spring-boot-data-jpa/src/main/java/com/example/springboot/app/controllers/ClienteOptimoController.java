@@ -6,6 +6,7 @@ import com.example.springboot.app.models.entity.Client;
 import com.example.springboot.app.util.paginator.PageRender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -67,6 +68,7 @@ public class ClienteOptimoController {
 
     //método para mostrar los registros pero paginados
     @GetMapping(value={"/listar","/"})
+    @Primary
     public String listar(@RequestParam(name="page", defaultValue = "0") int page, Model model){
         //Le estamos diciendo que muestre 4 registros por página
         Pageable pageRequest = PageRequest.of(page,5);

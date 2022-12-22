@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <div th:fragment="navbar" >
   <nav class="navbar navbar-expand-lg bg-light" style="background-color: #6bb23e !important;">
@@ -9,11 +9,31 @@
         <span class="navbar-toggler-icon" style="color:#fff !important;"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-          <a class="nav-link active" aria-current="page" href="#" style="color:#fff !important;">Home</a>
-          <!--<a class="nav-link" th:href="@{/listar}" style="color:#fff !important;">Clientes</a>-->
-          <a class="nav-link" th:href="@{/cliente/listar}" style="color:#fff !important;">Clientes</a>
-        </div>
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" aria-current="page" href="#" style="color:#fff !important;">Home</a>
+          </li>
+          <li class="nav-item">
+            <!--<a class="nav-link" th:href="@{/listar}" style="color:#fff !important;">Clientes</a>-->
+            <a class="nav-link" th:href="@{/cliente/listar}" style="color:#fff !important;">Clientes</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li sec:authorize="!isAuthenticated()">
+              <a class="btn btn-outline-success" th:href="@{/login}" style="color:#fff !important;">Iniciar Sesión</a>
+          </li>
+          <li sec:authorize="isAuthenticated()" class="dropdown">
+            <a class="btn btn-outline-warning dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <span sec:authentication="name"></span>
+            </a>
+
+            <ul class="dropdown-menu">
+                <form  id="logoutForm"  th:action="@{/logout}" method="post">
+                  <button class="dropdown-item" onclick="document.getElementById('logoutForm').submit;" type="submit">Cerrar Sesión</button>
+                </form>
+            </ul>
+          </li>
+        </ul>
       </div>
     </div>
   </nav>

@@ -75,7 +75,7 @@ public class ClienteController {
     }
 
     //método para mostrar los registros pero paginados
-    @GetMapping(value="/listar")
+    @GetMapping(value={"/listar","/"})
     public String listar(@RequestParam(name="page", defaultValue = "0") int page, Model model){
         //Le estamos diciendo que muestre 4 registros por página
         Pageable pageRequest = PageRequest.of(page,5);
