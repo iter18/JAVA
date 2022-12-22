@@ -17,8 +17,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,6 +28,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collection;
 import java.util.Map;
@@ -81,7 +85,9 @@ public class ClienteController {
 
     //método para mostrar los registros pero paginados
     @GetMapping(value={"/listar","/"})
-    public String listar(@RequestParam(name="page", defaultValue = "0") int page, Model model, Authentication authentication){
+    public String listar(@RequestParam(name="page", defaultValue = "0") int page,
+                         Model model,
+                         Authentication authentication, HttpServletRequest request){
 
         if(authentication != null){
             log.info("El usuario: "+authentication.getName()+" ha utilizado el recurso listar");
@@ -91,6 +97,22 @@ public class ClienteController {
         }else{
             log.info("El usuario: "+ authentication.getName()+ " No tiene acceso");
         }
+        /**
+         * Esta es otra mansera de hacerlo por medio del HttpServletRequest y ya no se necesita el método hasRole
+         * **/
+        SecurityContextHolderAwareRequestWrapper securityContext = new SecurityContextHolderAwareRequestWrapper(request,"ROLE_");
+        if(securityContext.isUserInRole("ADMIN")){
+            log.info("El usuario: "+ authentication.getName()+ " Tiene acceso por medio de SecurityContextHolderAwareRequestWrapper");
+        }else{
+            log.info("El usuario: "+ authentication.getName()+ " No tiene acceso por medio de SecurityContextHolderAwareRequestWrapper");
+        }
+        /*Otra manera de hacerlo es directamente con el HttpServletRequest*/
+        if(request.isUserInRole("ROLE_ADMIN")){
+            log.info("El usuario: "+ authentication.getName()+ " Tiene acceso por medio de HttpServletRequest");
+        }else{
+            log.info("El usuario: "+ authentication.getName()+ " No tiene acceso por medio de HttpServletRequest");
+        }
+
         //Le estamos diciendo que muestre 4 registros por página
         Pageable pageRequest = PageRequest.of(page,5);
 
@@ -193,11 +215,15 @@ public class ClienteController {
         }
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
 
+        //otra manera de hacerlo
+        return authorities.contains(new SimpleGrantedAuthority(role));
+        /*
+        Forma de hacerlo con lambada JAVA 8
         Boolean res = authorities.stream().map(grantedAuthority -> grantedAuthority.getAuthority().equals(role)).findFirst().get();
         if(res){
             return true;
         }
-        return false;
+        return false;*/
     }
 
 

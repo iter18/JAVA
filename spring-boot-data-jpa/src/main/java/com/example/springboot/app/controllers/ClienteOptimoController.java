@@ -84,7 +84,7 @@ public class ClienteOptimoController {
         if(hasRole("ROLE_ADMIN")){
             log.info("El usuario: "+ authentication.getName()+ " Tiene acceso");
         }else{
-            log.info("El usuario: "+ authentication.getName()+ " No tiene acceso");
+            log.info("El usuario: No tiene acceso");
         }
         //Le estamos diciendo que muestre 4 registros por página
         Pageable pageRequest = PageRequest.of(page,5);
