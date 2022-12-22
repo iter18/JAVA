@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="components/head :: head"></head>
+<body >
+  <div th:replace="components/navBar :: navbar"></div>
+  <div class="container py-4">
+    <div class="card bg-danger text-white">
+      <div class="card-header" >Error: Acceso Denegado!</div>
+      <div class="card-body">
+           <!--
+           Forma de obtener el nombre
+           <h5 class="card-title">Lo sentimos <span th:text="${#httpServletRequest.remoteUser}"></span>, no tienes permisos para accesar a esta funcionalidad.</h5>-->
+        <h5 class="card-title">Lo sentimos <span th:text="${#authentication.name}"></span>, no tienes permisos para accesar a esta funcionalidad.</h5>
+            <a th:href="@{/cliente/listar}" class="btn btn-outline-light" role="button">Ir al inicio</a>
+      </div>
+    </div>
+  </div>
+  <footer th:replace="components/footer :: footer"></footer>
+</body>
+</html>
