@@ -77,9 +77,8 @@ public class UploadFileServiceImpl implements UploadFileService {
                 e.printStackTrace();
             }
             return uniqueFilename;
-        }else {
-            throw new IllegalArgumentException("Operación invalida: El archivo no se cargo correctamente, revisa e intenta nuevamente");
         }
+        return "";
     }
 
     @Override

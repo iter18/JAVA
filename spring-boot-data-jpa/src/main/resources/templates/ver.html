@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="components/head :: head"></head>
 <body>
     <div th:replace="components/navBar :: navbar"></div>
@@ -9,7 +9,7 @@
             <div class="card-body">
                 <h4 class="card-title">
                     <!--<a th:href="@{/factura/form/}+${cliente.id}">-->
-                    <a th:href="@{/facturaOptimo/form/}+${client.id}">
+                    <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/facturaOptimo/form/}+${client.id}">
                         <button type="button" class="btn btn-secondary">Crear Factura</button>
                     </a>
                 </h4>
@@ -33,7 +33,7 @@
                             <td>Descripción</td>
                             <td>Fecha</td>
                             <td>Total</td>
-                            <td>Acciones</td>
+                            <td sec:authorize="hasRole('ROLE_ADMIN')">Acciones</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,7 +43,7 @@
                             <td th:text="${factura.descripcion}"></td>
                             <td th:text="${factura.createAt}"></td>
                             <td th:text="${factura.total}"></td>
-                            <td>
+                            <td sec:authorize="hasRole('ROLE_ADMIN')">
                                 <!--<a th:href="@{/factura/ver/}+${factura.id}">-->
                                 <a th:href="@{/facturaOptimo/ver/}+${factura.id}">
                                     <button type="button" class="btn btn-primary btn-sm">Detalle</button>
