@@ -16,6 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
+import java.util.Collection;
 import java.util.Map;
 
 
@@ -82,7 +86,11 @@ public class ClienteController {
         if(authentication != null){
             log.info("El usuario: "+authentication.getName()+" ha utilizado el recurso listar");
         }
-
+        if(hasRole("ROLE_ADMIN")){
+            log.info("El usuario: "+ authentication.getName()+ " Tiene acceso");
+        }else{
+            log.info("El usuario: "+ authentication.getName()+ " No tiene acceso");
+        }
         //Le estamos diciendo que muestre 4 registros por página
         Pageable pageRequest = PageRequest.of(page,5);
 
@@ -170,6 +178,26 @@ public class ClienteController {
         }
 
         return "redirect:/listar";
+    }
+
+    //Método para saber si tendrán permiso al recurso, proceso manual
+    private boolean hasRole(String role){
+        SecurityContext context = SecurityContextHolder.getContext();
+
+        if(context == null){
+            return false;
+        }
+        Authentication auth = context.getAuthentication();
+        if (auth == null){
+            return false;
+        }
+        Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
+
+        Boolean res = authorities.stream().map(grantedAuthority -> grantedAuthority.getAuthority().equals(role)).findFirst().get();
+        if(res){
+            return true;
+        }
+        return false;
     }
 
 
