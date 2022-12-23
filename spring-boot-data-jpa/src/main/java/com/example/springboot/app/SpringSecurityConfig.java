@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import javax.sql.DataSource;
+
 @Configuration
 /** La anotación @EnableGlobalMethodSecurity es para habilitar la anotación @Secured y @PreAuthorize
  * Despues se debe anotar en cada método del controller con el nombre del rol que tendrá el permiso del recurso
@@ -24,6 +26,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    DataSource dataSource;
 
 
     @Override
@@ -47,9 +52,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-    /*De momento el método será tener los usuarios en memoria*/
+
     public void configureGlobal(AuthenticationManagerBuilder builder) throws Exception{
-        PasswordEncoder encoder = passwordEncoder;
+        /*De momento el método será tener los usuarios en memoria*/
+        /*PasswordEncoder encoder = passwordEncoder;
         User.UserBuilder users = User.builder().passwordEncoder(encoder::encode);
         builder.inMemoryAuthentication()
                 .withUser(users.username("admin")
@@ -57,7 +63,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         .roles("ADMIN","USER"))
                 .withUser(users.username("andres")
                         .password("123456")
-                        .roles("USER"));
+                        .roles("USER"));*/
+
+        //Esta es la manera correcta mediante DB pero usando una consulta SQL
+        builder.jdbcAuthentication()
+                .dataSource(dataSource)
+                .passwordEncoder(passwordEncoder)
+                .usersByUsernameQuery("select username,password,enabled from users where username=?")
+                .authoritiesByUsernameQuery("select u.username, a.authority from authorities a inner join users u on (a.user_id=u.id) where u.username=?");
+
     }
 
 }
