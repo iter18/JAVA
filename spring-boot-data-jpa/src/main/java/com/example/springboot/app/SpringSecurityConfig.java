@@ -1,6 +1,7 @@
 package com.example.springboot.app;
 
 import com.example.springboot.app.auth.handler.LoginSuccessHandler;
+import com.example.springboot.app.dao.services.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -26,6 +27,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JpaUserDetailsService userDetailsService;
 
     @Autowired
     DataSource dataSource;
@@ -66,11 +70,15 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         .roles("USER"));*/
 
         //Esta es la manera correcta mediante DB pero usando una consulta SQL
-        builder.jdbcAuthentication()
+        /*builder.jdbcAuthentication()
                 .dataSource(dataSource)
                 .passwordEncoder(passwordEncoder)
                 .usersByUsernameQuery("select username,password,enabled from users where username=?")
-                .authoritiesByUsernameQuery("select u.username, a.authority from authorities a inner join users u on (a.user_id=u.id) where u.username=?");
+                .authoritiesByUsernameQuery("select u.username, a.authority from authorities a inner join users u on (a.user_id=u.id) where u.username=?");*/
+
+        //Esta es la manera correcta pero usando JPA
+        builder.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder);
 
     }
 

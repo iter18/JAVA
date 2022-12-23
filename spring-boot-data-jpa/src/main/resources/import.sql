@@ -36,3 +36,14 @@ INSERT INTO productos (nombre, precio, create_at) VALUES ('Dell Presicion M4800'
 INSERT INTO productos (nombre, precio, create_at) VALUES ('Multifuncional HP',17000,NOW());
 INSERT INTO productos (nombre, precio, create_at) VALUES ('Samsung S10 plus',18598,NOW());
 INSERT INTO productos (nombre, precio, create_at) VALUES ('AP linksys',8698,NOW());
+
+/* insercion de usuario y roles de prueba*/
+INSERT INTO users (username,PASSWORD,enabled) VALUES ('tony','$2a$10$7wiDvuxQkv09PNaQk7RxY.cxfSR43d533hfzxuF2bd81.voQADZYu',1);
+INSERT INTO users (username,PASSWORD,enabled) VALUES ('admin','$2a$10$sUY19fb.ZSih7k4NRa2yjOlLRTLD8OG23pEiYazWv69jUFFE8GvNy',1);
+
+INSERT INTO authorities (user_id,authority) VALUES (1, 'ROLE_USER');
+INSERT INTO authorities (user_id,authority) VALUES (2, 'ROLE_USER');
+INSERT INTO authorities (user_id,authority) VALUES (2, 'ROLE_ADMIN');
+
+--Para implementar que la DB ya este creada en el applicationProperties
+--spring.jpa.hibernate.ddl-auto=create-drop

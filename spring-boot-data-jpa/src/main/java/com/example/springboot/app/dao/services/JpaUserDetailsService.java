@@ -35,16 +35,16 @@ public class JpaUserDetailsService implements UserDetailsService {
         }
 
         //Forma 1 de obtener roles por ciclo for Java < 8
-        List<GrantedAuthority> authoritiesList = new ArrayList<GrantedAuthority>();
+        /*List<GrantedAuthority> authoritiesList = new ArrayList<GrantedAuthority>();
         for (Rol rol : usuario.getRoles()){
             authoritiesList.add(new SimpleGrantedAuthority(rol.getAuthority()));
-        }
+        }*/
 
         //Forma 2 de obtener roles por Stream Java >8
-        /*List<GrantedAuthority> authoritiesList = usuario.getRoles().stream().map(rol -> {
+        List<GrantedAuthority> authoritiesList = usuario.getRoles().stream().map(rol -> {
             SimpleGrantedAuthority s = new SimpleGrantedAuthority(rol.getAuthority());
             return s;
-        }).collect(Collectors.toList());*/
+        }).collect(Collectors.toList());
 
 
         if(authoritiesList.isEmpty()){
