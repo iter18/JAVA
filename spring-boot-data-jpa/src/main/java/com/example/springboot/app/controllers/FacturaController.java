@@ -7,6 +7,7 @@ import com.example.springboot.app.models.entity.ItemFactura;
 import com.example.springboot.app.models.entity.Producto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -22,6 +23,7 @@ import java.util.Map;
 @RequestMapping("/factura")
 @Slf4j
 @SessionAttributes("factura")
+@Secured("ROLE_ADMIN")
 public class FacturaController {
 
     @Autowired

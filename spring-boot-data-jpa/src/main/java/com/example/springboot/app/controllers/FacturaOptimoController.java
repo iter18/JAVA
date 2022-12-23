@@ -4,6 +4,7 @@ import com.example.springboot.app.dao.services.ClienteOptimoService;
 import com.example.springboot.app.models.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,7 @@ import java.util.Map;
 @RequestMapping("/facturaOptimo")
 @Slf4j
 @SessionAttributes("invoice")
+@PreAuthorize("hasAnyRole('ROLE_ADMIN')")
 public class FacturaOptimoController {
     @Autowired
     ClienteOptimoService clienteService;

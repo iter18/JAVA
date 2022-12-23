@@ -13,11 +13,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
-import java.util.Collection;
 import java.util.Map;
 
 
@@ -47,6 +43,7 @@ public class ClienteOptimoController {
 
     //Método para obtener la imágen por petición y poder mostarla
     //al final la expresión.+ es para indicar que se tome en cuanta el archivo
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value="/uploads/{filename:.+}")
     public ResponseEntity<Resource> verFoto(@PathVariable String filename) {
 
@@ -57,6 +54,7 @@ public class ClienteOptimoController {
     }
 
     //Método para ver el detalle de un cliente
+    @PreAuthorize("isAuthenticated()")
     @GetMapping(value = "/ver/{id}")
     public String ver(@PathVariable("id")Long id,
                       Map<String,Object> model,
@@ -77,15 +75,6 @@ public class ClienteOptimoController {
     @Primary
     public String listar(@RequestParam(name="page", defaultValue = "0") int page, Model model, Authentication authentication){
 
-        if(authentication != null){
-            log.info("El usuario: "+authentication.getName()+" ha utilizado el recurso listar");
-        }
-
-        if(hasRole("ROLE_ADMIN")){
-            log.info("El usuario: "+ authentication.getName()+ " Tiene acceso");
-        }else{
-            log.info("El usuario: No tiene acceso");
-        }
         //Le estamos diciendo que muestre 4 registros por página
         Pageable pageRequest = PageRequest.of(page,5);
 
@@ -101,6 +90,7 @@ public class ClienteOptimoController {
     }
 
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value = "/form")
     public String crear(Map<String,Object> model){
         Client cliente = new Client();
@@ -110,6 +100,7 @@ public class ClienteOptimoController {
     }
 
     //Método para guardar
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PostMapping(value="/form")
     public String guardar(@Valid Client cliente,
                           BindingResult result,
@@ -130,6 +121,7 @@ public class ClienteOptimoController {
         return "redirect:/cliente/listar";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @RequestMapping(value="/form/{id}")
     public String editar(@PathVariable("id") Long id, Map<String,Object> model,RedirectAttributes flash){
         Client cliente = null;
@@ -145,6 +137,7 @@ public class ClienteOptimoController {
         return "form";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @RequestMapping(value="/eliminar/{id}")
     public String eliminar(@PathVariable("id") Long id,RedirectAttributes flash){
         boolean respuesta = clienteOptimoService.delete(id);
@@ -154,28 +147,7 @@ public class ClienteOptimoController {
         return "redirect:/cliente/listar";
     }
 
-    //Método para saber si tendrán permiso al recurso, proceso manual
-    private boolean hasRole(String role){
-        SecurityContext context = SecurityContextHolder.getContext();
 
-        if(context == null){
-            return false;
-        }
-        Authentication auth = context.getAuthentication();
-        if (auth == null){
-            return false;
-        }
-        Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
-        //otra manera de hacerlo
-        return authorities.contains(new SimpleGrantedAuthority(role));
-        /*
-        Forma de hacerlo con lambada JAVA 8
-        Boolean res = authorities.stream().map(grantedAuthority -> grantedAuthority.getAuthority().equals(role)).findFirst().get();
-        if(res){
-            return true;
-        }
-        return false;*/
-    }
 
 
 }

@@ -15,6 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -128,6 +130,14 @@ public class ClienteController {
     }
 
 
+
+    //Secured para agregar más de un sólo rol es
+    //@Secured({"ROLE_ADMIN","ROLE_USER"})
+    // @Secured("ROLE_ADMIN")
+    //con hasRole solo se puede pasar un sólo ROL
+    // @PreAuthorize("hasRole('ROLE_ADMIN')")
+    //hasAnyRole se puede pasar más de un sólo rol separado por coma
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @GetMapping(value = "/form")
     public String crear(Map<String,Object> model){
         Cliente cliente = new Cliente();
