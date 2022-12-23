@@ -2,7 +2,6 @@ package com.example.springboot.app;
 
 import com.example.springboot.app.auth.handler.LoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -23,10 +22,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private LoginSuccessHandler successHandler;
 
-    @Bean
-    public static BCryptPasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -51,7 +49,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     /*De momento el método será tener los usuarios en memoria*/
     public void configureGlobal(AuthenticationManagerBuilder builder) throws Exception{
-        PasswordEncoder encoder = passwordEncoder();
+        PasswordEncoder encoder = passwordEncoder;
         User.UserBuilder users = User.builder().passwordEncoder(encoder::encode);
         builder.inMemoryAuthentication()
                 .withUser(users.username("admin")
