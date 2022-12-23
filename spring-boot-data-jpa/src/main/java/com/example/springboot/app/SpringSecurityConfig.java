@@ -38,7 +38,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/","/cliente/", "/css/**", "/js/**", "/images/**", "/cliente/listar")
+                .antMatchers("/","/cliente/", "/css/**", "/js/**", "/images/**", "/cliente/listar","/locale")
                 .permitAll()
                 /* Esta forma es para dar permisos de forma manual sabiendo que roles vamos a esperar
                 .antMatchers("/cliente/ver/**").hasAnyRole("USER")

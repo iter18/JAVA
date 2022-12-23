@@ -6,6 +6,7 @@ import com.example.springboot.app.models.entity.Client;
 import com.example.springboot.app.util.paginator.PageRender;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -39,6 +41,9 @@ public class ClienteOptimoController {
 
     @Autowired
     private UploadFileService uploadFileService;
+
+    @Autowired
+    private MessageSource messageSource;
 
 
     //Método para obtener la imágen por petición y poder mostarla
@@ -73,7 +78,10 @@ public class ClienteOptimoController {
     //método para mostrar los registros pero paginados
     @GetMapping(value={"/listar","/"})
     @Primary
-    public String listar(@RequestParam(name="page", defaultValue = "0") int page, Model model, Authentication authentication){
+    public String listar(@RequestParam(name="page", defaultValue = "0") int page,
+                         Model model,
+                         Authentication authentication,
+                         Locale locale){
 
         //Le estamos diciendo que muestre 4 registros por página
         Pageable pageRequest = PageRequest.of(page,5);
@@ -82,7 +90,7 @@ public class ClienteOptimoController {
 
         PageRender<Client> pageRender = new PageRender<>("/cliente/listar",clientes);
 
-        model.addAttribute("titulo","Listado de clientes");
+        model.addAttribute("titulo",messageSource.getMessage("text.cliente.listar.titulo",null,locale));
         model.addAttribute("clientes",clientes);
         model.addAttribute("page",pageRender);
 

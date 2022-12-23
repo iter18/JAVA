@@ -20,7 +20,7 @@
             <thead>
             <tr>
                 <td sec:authorize="hasRole('ROLE_USER')">id</td>
-                <td>Nombre</td>
+                <td th:text="#{text.cliente.nombre}">Nombre</td>
                 <td>Apellido</td>
                 <td>Correo</td>
                 <td>Fecha Alta</td>
