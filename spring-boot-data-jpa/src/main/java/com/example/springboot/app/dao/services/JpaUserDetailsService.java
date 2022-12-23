@@ -45,7 +45,7 @@ public class JpaUserDetailsService implements UserDetailsService {
             SimpleGrantedAuthority s = new SimpleGrantedAuthority(rol.getAuthority());
             return s;
         }).collect(Collectors.toList());*/
-        
+
 
         if(authoritiesList.isEmpty()){
             log.error("Error: El usuario "+username+" no tiene roles");
