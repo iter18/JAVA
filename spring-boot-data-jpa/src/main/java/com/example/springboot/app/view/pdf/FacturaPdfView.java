@@ -7,16 +7,27 @@ import com.lowagie.text.Phrase;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.view.document.AbstractPdfView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
+import java.util.Locale;
 import java.util.Map;
 
 @Component("factura/ver")
 public class FacturaPdfView extends AbstractPdfView {
+
+    @Autowired
+    private MessageSource messageSource;
+
+    @Autowired
+    private LocaleResolver localeResolver;
+
     @Override
     protected void buildPdfDocument(Map<String, Object> model,
                                     Document document,
@@ -25,11 +36,13 @@ public class FacturaPdfView extends AbstractPdfView {
                                     HttpServletResponse response) throws Exception {
         Invoice factura = (Invoice) model.get("factura");
 
+        Locale locale = localeResolver.resolveLocale(request);
+
         PdfPTable tabla = new PdfPTable(1);
         tabla.setSpacingAfter(20);
 
         PdfPCell cell = null;
-        cell = new PdfPCell(new Phrase("Datos del Cliente"));
+        cell = new PdfPCell(new Phrase(messageSource.getMessage("text.cliente.listar.titulo",null,locale)));
         cell.setBackgroundColor(new Color(184,218,255));
         cell.setPadding(8f);
 
