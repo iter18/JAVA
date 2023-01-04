@@ -7,19 +7,28 @@ import com.example.springboot.app.dao.repositorys.spec.ProductoSpecification;
 import com.example.springboot.app.dao.services.ClienteOptimoService;
 import com.example.springboot.app.dao.services.UploadFileService;
 import com.example.springboot.app.models.entity.*;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.pdf.PdfPCell;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.design.JasperDesign;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -177,5 +186,35 @@ public class ClienteOptimoServiceImpl implements ClienteOptimoService {
         }catch (Exception e){
             throw e;
         }
+    }
+
+    @Override
+    public String exportPDF(String format,Long id) throws JRException, FileNotFoundException, UnsupportedEncodingException {
+        try {
+                String destino = "C:\\reportes";
+
+                Invoice factura = this.buscar(id);
+                if(factura == null){
+                    return null;
+                }
+
+                List<Producto> productoList = factura.getItemsFactura().stream().map(itemInvoice -> itemInvoice.getProducto()).collect(Collectors.toList());
+
+                Map<String,Object> parameters = new HashMap<>();
+                parameters.put("ds",factura.getItemsFactura());
+                parameters.put("folio",factura.getId().toString());
+                JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(factura.getItemsFactura());
+
+                File file = ResourceUtils.getFile("classpath:reportes/ReporteFactura.jrxml");
+                JasperReport jasperReport = JasperCompileManager.compileReport(URLDecoder.decode(file.getAbsolutePath(),"UTF-8"));
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport,parameters,jrBeanCollectionDataSource);
+
+                JasperExportManager.exportReportToPdfFile(jasperPrint,destino+"\\factura.pdf");
+
+            return  "El reporte se ha generado";
+        }catch (Exception e){
+            throw e;
+        }
+
     }
 }

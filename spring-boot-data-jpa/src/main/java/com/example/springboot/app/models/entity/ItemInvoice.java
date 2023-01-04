@@ -27,8 +27,12 @@ public class ItemInvoice implements Serializable {
     private Double importe;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "producto_id")
     private Producto producto;
+
+    @ManyToOne
+    @JoinColumn(name = "factura_id")
+    private Invoice factura;
 
 }

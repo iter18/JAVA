@@ -3,6 +3,7 @@ package com.example.springboot.app.controllers;
 import com.example.springboot.app.dao.services.ClienteOptimoService;
 import com.example.springboot.app.models.entity.*;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +40,26 @@ public class FacturaOptimoController {
             flash.addFlashAttribute("error","La factura no existe, verifique e intente nuevamente");
             return "redirect:/cliente/listar";
         }
+        model.addAttribute("factura",factura);
+        model.addAttribute("titulo","Factua: ".concat(factura.getDescripcion()));
+
+        return "factura/ver";
+    }
+
+    //Metodo para obtener factura por JasperReports
+    @GetMapping("/pdf/{id}")
+    public String pdf(@PathVariable("id") Long id,
+                      @RequestParam("format") String format,
+                      Model model,
+                      RedirectAttributes flash) throws JRException, FileNotFoundException, UnsupportedEncodingException {
+
+        String mensaje = clienteService.exportPDF("PDF",id);
+        Invoice factura = clienteService.buscar(id);
+        if(mensaje == null){
+            flash.addFlashAttribute("error","no se pudo generar, verifique e intente nuevamente");
+            return "redirect:/cliente/listar";
+        }
+        flash.addFlashAttribute("info",mensaje);
         model.addAttribute("factura",factura);
         model.addAttribute("titulo","Factua: ".concat(factura.getDescripcion()));
 
