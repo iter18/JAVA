@@ -12,8 +12,11 @@
           <a th:href="@{/cliente/ver/}+${factura.cliente.id}">
             <button type="button" class="btn btn-primary">&laquo;Regresar</button>
           </a>
+          <a th:href="@{'/facturaOptimo/ver/' + ${factura.id}(format=xlsx)}">
+            <button type="button" class="btn btn-success float-end mx-2">XLS</button>
+          </a>
           <a th:href="@{'/facturaOptimo/pdf/' + ${factura.id}(format=pdf)}">
-            <button type="button" class="btn btn-danger float-end">Descargar PDF</button>
+            <button type="button" class="btn btn-danger float-end mx-2">Descargar PDF</button>
           </a>
           <a th:href="@{'/facturaOptimo/ver/' + ${factura.id}(format=pdf)}">
             <button type="button" class="btn btn-warning float-end">Ver PDF</button>

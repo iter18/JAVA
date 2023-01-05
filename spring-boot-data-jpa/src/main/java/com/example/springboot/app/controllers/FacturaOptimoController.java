@@ -41,7 +41,7 @@ public class FacturaOptimoController {
             return "redirect:/cliente/listar";
         }
         model.addAttribute("factura",factura);
-        model.addAttribute("titulo","Factua: ".concat(factura.getDescripcion()));
+        model.addAttribute("titulo","Factura: ".concat(factura.getDescripcion()));
 
         return "factura/ver";
     }
