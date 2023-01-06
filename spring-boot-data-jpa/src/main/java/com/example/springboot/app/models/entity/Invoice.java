@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,7 @@ public class Invoice implements Serializable {
     @Column(name = "create_at")
     private Date createAt;
 
+    @XmlTransient
     @ManyToOne(fetch = FetchType.LAZY)
     private Client cliente;
 

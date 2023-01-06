@@ -47,7 +47,7 @@ public class Client implements Serializable {
     private String foto;
 
     @OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Factura> facturas;
+    private List<Invoice> facturas;
 
     @Override
     public String toString() {
