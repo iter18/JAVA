@@ -1,5 +1,7 @@
 package com.example.springboot.app.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,10 +30,12 @@ public class ItemInvoice implements Serializable {
 
 
     @ManyToOne
+    @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     @JoinColumn(name = "producto_id")
     private Producto producto;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "factura_id")
     private Invoice factura;
 
