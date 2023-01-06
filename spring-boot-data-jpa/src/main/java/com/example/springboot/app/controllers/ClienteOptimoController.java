@@ -24,6 +24,7 @@ import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -73,6 +74,14 @@ public class ClienteOptimoController {
         model.put("client",cliente);
         model.put("titulo","Detalle del cliente: "+cliente.getNombre());
         return "ver";
+    }
+    //método para mostrar los registros pero paginados y se usa @ResponseBody para definir un método como REST en un controller, es decir sin colocar @RestController
+    @GetMapping(value="/api/listar")
+    public @ResponseBody List<Client> listar() {
+
+        //agregar xml+json
+        //return new Clientelist(clienteOptimoService.findAll());
+        return clienteOptimoService.findAll();
     }
 
     //método para mostrar los registros pero paginados
