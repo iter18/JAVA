@@ -16,6 +16,9 @@
         <h1 class="text-secondary border border-success border-top-0 border-end-0 border-start-0 shadow-sm p-3 mb-5 bg-body" th:text="${titulo}"></h1>
         <!--<a th:href="@{/form}"><button type="button" class="btn btn-primary">Crear Cliente</button></a>-->
         <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/cliente/form}"><button type="button" class="btn btn-primary">Crear Cliente</button></a>
+        <a th:href="@{'/cliente/listar'(format=csv)}">
+            <button type="button" class="btn btn-success float-end mx-2">Exportar Csv</button>
+        </a>
         <table class="table table-striped text-center">
             <thead>
             <tr>
