@@ -76,7 +76,7 @@ public class ClienteOptimoController {
         return "ver";
     }
     //método para mostrar los registros pero paginados y se usa @ResponseBody para definir un método como REST en un controller, es decir sin colocar @RestController
-    @GetMapping(value="/api/listar")
+    @GetMapping(value="/api/listar-rest")
     public @ResponseBody List<Client> listar() {
 
         //agregar xml+json
