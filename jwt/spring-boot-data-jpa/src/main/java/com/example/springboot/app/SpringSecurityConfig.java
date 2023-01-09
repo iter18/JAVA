@@ -20,7 +20,7 @@ import javax.sql.DataSource;
  * Despues se debe anotar en cada método del controller con el nombre del rol que tendrá el permiso del recurso
  * y si un controller sera para un rol en especifico se deve colocara la anotación hasta arriba, @secured **/
 
-@EnableGlobalMethodSecurity(securedEnabled = true,prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -39,7 +39,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/","/cliente/", "/css/**", "/js/**", "/images/**", "/cliente/listar","/locale","/cliente/api/listar","/api/clientes/listar")
+                .antMatchers("/","/cliente/", "/css/**", "/js/**", "/images/**", "/cliente/listar","/locale","/cliente/api/listar")
                 .permitAll()
                 /* Esta forma es para dar permisos de forma manual sabiendo que roles vamos a esperar
                 .antMatchers("/cliente/ver/**").hasAnyRole("USER")
@@ -48,12 +48,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/cliente/eliminar/**").hasAnyRole("ADMIN")
                 .antMatchers("/facturaOptimo/**").hasAnyRole("ADMIN")*/
                 .anyRequest().authenticated()
+                /*Se deshabilita por que va funcionar unicamente para REST
                 .and()
                 .formLogin().successHandler(successHandler).loginPage("/login").permitAll()
                 .and()
                 .logout().permitAll()
                 .and()
-                .exceptionHandling().accessDeniedPage("/error_403")
+                .exceptionHandling().accessDeniedPage("/error_403")*/
                 .and()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
