@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Component("listar")
 public class ClienteCsvCiew extends AbstractView {
-    @Override
+    @Override 
     protected boolean generatesDownloadContent() {
         return true;
     }

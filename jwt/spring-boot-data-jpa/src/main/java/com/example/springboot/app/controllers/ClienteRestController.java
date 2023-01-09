@@ -22,3 +22,4 @@ public class ClienteRestController {
         return clienteOptimoService.findAll();
     }
 }
+
