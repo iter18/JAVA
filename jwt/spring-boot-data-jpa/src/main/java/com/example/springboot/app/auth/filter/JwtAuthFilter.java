@@ -1,6 +1,9 @@
 package com.example.springboot.app.auth.filter;
 
 
+import com.example.springboot.app.models.entity.Usuario;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -41,14 +44,28 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
         String username = this.obtainUsername(request);
-        username = username != null ? username : "";
-
         String password = this.obtainPassword(request);
-        password = password != null ? password : "";
 
+        //Forma de hacerlo con un formdata
         if(username != null && password != null){
             logger.info("Username desde request parameter (form-data): "+ username);
             logger.info("password desde request parameter (form-data): "+ password);
+        }else{
+            //Si no se hace con form-data hay que recibirlo como json y convertimos a Json lo recibido
+            Usuario user = null;
+            try {
+                 user= new ObjectMapper().readValue(request.getInputStream(),Usuario.class);
+                 username = user.getUsername();
+                 password = user.getPassword();
+                logger.info("Username desde request parameter (raw): "+ username);
+                logger.info("password desde request parameter (raw): "+ password);
+            } catch (JsonParseException e) {
+                e.printStackTrace();
+            }catch (JsonMappingException e){
+                e.printStackTrace();
+            }catch (IOException e){
+                e.printStackTrace();
+            }
         }
         username = username.trim();
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,password);
