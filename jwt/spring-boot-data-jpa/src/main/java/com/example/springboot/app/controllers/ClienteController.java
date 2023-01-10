@@ -86,7 +86,7 @@ public class ClienteController {
     }
 
     //método para mostrar los registros pero paginados
-    @GetMapping(value={"/listar","/"})
+    @GetMapping(value={"/listar"})
     public String listar(@RequestParam(name="page", defaultValue = "0") int page,
                          Model model,
                          Authentication authentication, HttpServletRequest request){
