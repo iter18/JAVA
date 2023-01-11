@@ -1,6 +1,7 @@
 package com.example.springboot.app;
 
 import com.example.springboot.app.auth.filter.JwtAuthFilter;
+import com.example.springboot.app.auth.filter.JwtAuthorizationFilter;
 import com.example.springboot.app.auth.handler.LoginSuccessHandler;
 import com.example.springboot.app.dao.services.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +59,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().accessDeniedPage("/error_403")*/
                 .and()
                 .addFilter(new JwtAuthFilter(authenticationManager()))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager()))
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

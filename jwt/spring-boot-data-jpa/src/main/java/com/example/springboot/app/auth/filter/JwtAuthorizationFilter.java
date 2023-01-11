@@ -1,5 +1,10 @@
 package com.example.springboot.app.auth.filter;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -8,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Key;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
@@ -24,6 +30,23 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         if(!requiresAthentication(header)){
             chain.doFilter(request,response);
             return;
+        }
+        boolean validoToken;
+        Claims token = null;
+
+        try {
+                token = Jwts.parserBuilder()
+                    .setSigningKey(JwtAuthFilter.SECRET_KEY)
+                    .build()
+                    .parseClaimsJwt(header.replace("Bearer ",""))
+                        .getBody();
+
+                validoToken = true;
+        }catch (JwtException | IllegalArgumentException e){
+            validoToken = false;
+        }
+        if(validoToken){
+
         }
     }
 

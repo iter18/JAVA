@@ -20,11 +20,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Key;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,6 +35,7 @@ import java.util.Map;
 public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
+    public static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
 
     public JwtAuthFilter(AuthenticationManager authenticationManager) {
@@ -75,7 +78,7 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
             throws IOException, ServletException {
-        SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+       // SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
 
         Claims claims = Jwts.claims();
@@ -83,7 +86,7 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setSubject(authResult.getName())
-                .signWith(secretKey)
+                .signWith(JwtAuthFilter.SECRET_KEY)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+3600000L))
                 .compact();
