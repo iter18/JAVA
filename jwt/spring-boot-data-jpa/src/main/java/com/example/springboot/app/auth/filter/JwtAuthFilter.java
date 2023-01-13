@@ -42,7 +42,7 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
         this.authenticationManager = authenticationManager;
         setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/login","POST"));
     }
-
+    //Método para validar autentificación
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
@@ -75,26 +75,31 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
         return authenticationManager.authenticate(authenticationToken);
     }
 
+    // método que se ejecuta cuando la autenticación es exitosa
+    ////// se crea el jwt con código secreto
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
             throws IOException, ServletException {
        // SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        String llaveSecreta = JwtAuthFilter.SECRET_KEY.getEncoded().toString();
+        logger.info("---->Llave secreta generada: "+llaveSecreta);
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
 
         Claims claims = Jwts.claims();
+        //Seconvierten los roles a formato Json
         claims.put("authorities",new ObjectMapper().writeValueAsString(roles));
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setSubject(authResult.getName())
                 .signWith(JwtAuthFilter.SECRET_KEY)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+3600000L))
+                .setExpiration(new Date(System.currentTimeMillis()+3600000))
                 .compact();
         response.addHeader("Authorization","Bearer "+token);
 
         Map<String,Object> body = new HashMap<>();
         body.put("token", token);
-        body.put("user", (User)authResult.getPrincipal() );
+        body.put("user", authResult.getPrincipal() );
         body.put("mensaje",String.format("Hola %s, has iniciado sesión con éxito!",authResult.getName()));
         response.getWriter().write(new ObjectMapper().writeValueAsString(body));
         response.setStatus(200);

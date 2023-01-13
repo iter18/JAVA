@@ -3,6 +3,7 @@ package com.example.springboot.app.controllers;
 import com.example.springboot.app.dao.services.ClienteOptimoService;
 import com.example.springboot.app.models.entity.Client;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +18,7 @@ public class ClienteRestController {
     ClienteOptimoService clienteOptimoService;
 
     @GetMapping(value="/listar")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public  List<Client> listar() {
 
         return clienteOptimoService.findAll();
