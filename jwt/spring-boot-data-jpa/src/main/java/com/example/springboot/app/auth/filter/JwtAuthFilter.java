@@ -1,46 +1,38 @@
 package com.example.springboot.app.auth.filter;
 
 
+import com.example.springboot.app.auth.service.JwtService;
+import com.example.springboot.app.auth.service.impl.JwtServiceImpl;
 import com.example.springboot.app.models.entity.Usuario;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.Key;
-import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     private AuthenticationManager authenticationManager;
-    public static final Key SECRET_KEY = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+    //Al ser una clase de filtro no se puede inyectar, por lo que se pasa por constructor
+    private JwtService jwtService;
 
 
-    public JwtAuthFilter(AuthenticationManager authenticationManager) {
+    public JwtAuthFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         setRequiresAuthenticationRequestMatcher(new AntPathRequestMatcher("/api/login","POST"));
+
+        this.jwtService = jwtService;
     }
     //Método para validar autentificación
     @Override
@@ -80,22 +72,9 @@ public class JwtAuthFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult)
             throws IOException, ServletException {
-       // SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-        String llaveSecreta = JwtAuthFilter.SECRET_KEY.getEncoded().toString();
-        logger.info("---->Llave secreta generada: "+llaveSecreta);
-        Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
-
-        Claims claims = Jwts.claims();
-        //Seconvierten los roles a formato Json
-        claims.put("authorities",new ObjectMapper().writeValueAsString(roles));
-        String token = Jwts.builder()
-                .setClaims(claims)
-                .setSubject(authResult.getName())
-                .signWith(JwtAuthFilter.SECRET_KEY)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+3600000))
-                .compact();
-        response.addHeader("Authorization","Bearer "+token);
+        //obtengo el token creado de la clase service
+        String token = jwtService.create(authResult);
+        response.addHeader(JwtServiceImpl.HEADER_STRING,JwtServiceImpl.TOKEN_PREFIX+token);
 
         Map<String,Object> body = new HashMap<>();
         body.put("token", token);

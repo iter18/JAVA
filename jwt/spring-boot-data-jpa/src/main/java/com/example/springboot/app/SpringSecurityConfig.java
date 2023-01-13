@@ -3,6 +3,7 @@ package com.example.springboot.app;
 import com.example.springboot.app.auth.filter.JwtAuthFilter;
 import com.example.springboot.app.auth.filter.JwtAuthorizationFilter;
 import com.example.springboot.app.auth.handler.LoginSuccessHandler;
+import com.example.springboot.app.auth.service.JwtService;
 import com.example.springboot.app.dao.services.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -37,6 +38,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
+    //Inyectamos clase service para poder ingresarlo en el constructor del JwtAuth
+    @Autowired
+    JwtService jwtService;
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -58,8 +63,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling().accessDeniedPage("/error_403")*/
                 .and()
-                .addFilter(new JwtAuthFilter(authenticationManager()))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager()))
+                .addFilter(new JwtAuthFilter(authenticationManager(),jwtService))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(),jwtService))
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
