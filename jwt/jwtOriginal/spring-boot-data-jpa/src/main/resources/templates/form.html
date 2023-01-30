@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title th:text="${titulo}"></title>
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+            crossorigin="anonymous">
+</head>
+</head>
+<body>
+    <div th:replace="components/navBar :: navbar"></div>
+    <div class="container text-center">
+        <h1 class="text-secondary border border-success border-top-0 border-end-0 border-start-0 shadow-sm p-3 mb-5 bg-body" th:text="${titulo}"></h1>
+       <div th:object="${client}" th:remove="tag" >
+            <ul th:if="${#fields.hasErrors('*')}" class="text-start ps-5 alert alert-danger">
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+       </div>
+        <!--<form method="post" th:object="${cliente}" th:action="@{/form}" enctype="multipart/form-data">-->
+        <form method="post" th:object="${client}" th:action="@{/cliente/form}" enctype="multipart/form-data">
+            <table class="table table-striped text-center">
+                <tr>
+                    <td>Nombre:</td>
+                    <td>
+                        <input type="text" th:field="*{nombre}" class="form-control" th:errorclass="'alert alert-danger'"/>
+                        <small th:if="${#fields.hasErrors('nombre')}"
+                             th:errors="*{nombre}" class="form-text text-danger"></small>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Apellido:</td>
+                    <td>
+                        <input type="text" th:field="*{apellido}" class="form-control" th:errorclass="'alert alert-danger'"/>
+                        <small th:if="${#fields.hasErrors('apellido')}"
+                               th:errors="*{apellido}" class="form-text text-danger"></small>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Correo:</td>
+                    <td>
+                        <input type="email" th:field="*{email}" class="form-control" th:errorclass="'alert alert-danger'"/>
+                        <small th:if="${#fields.hasErrors('email')}"
+                               th:errors="*{email}" class="form-text text-danger"></small>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Fecha:</td>
+                    <td>
+                        <input type="date" th:field="*{createAt}" class="form-control" th:errorclass="'alert alert-danger'"/>
+                        <small th:if="${#fields.hasErrors('createAt')}"
+                               th:errors="*{createAt}" class="form-text text-danger"></small>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Foto:</td>
+                    <td>
+                        <input type="file" name="file"  class="form-control"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td><input type="submit" value="Crear Cliente" class="btn btn-primary"/></td>
+                </tr>
+            </table>
+            <!-- Ya no es necesario por que se agrego session y persite el objeto completo<input type="hidden" th:field="*{id}">-->
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js" integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk" crossorigin="anonymous"></script>
+</body>
+</html>
