@@ -17,7 +17,7 @@ import java.util.List;
  * Si se deja sólamente con la dirección del dominio de donde se compartiran los recursos
  * por defecto tendra permiso a todos los métodos y las cabezeras
  */
-@CrossOrigin(origins = {"http://localhost:4200"})
+//@CrossOrigin(origins = {"http://localhost:4200"})
 @RestController
 @Slf4j
 @RequestMapping("/api")
