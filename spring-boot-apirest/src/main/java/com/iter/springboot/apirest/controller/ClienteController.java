@@ -5,10 +5,8 @@ import com.iter.springboot.apirest.modelo.Cliente;
 import com.iter.springboot.apirest.service.ClienteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -29,5 +27,31 @@ public class ClienteController {
     @GetMapping("/clientes")
     public List<Cliente> index(){
         return clienteService.buscar();
+    }
+
+    @GetMapping("/clientes/{id}")
+    public Cliente buscar(@PathVariable Long id){
+        return clienteService.buscar(id);
+    }
+
+    //Este método es una forma haciendo directamente con objetos, pero existe otro método más comercial
+    @PostMapping("clientes")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Cliente alta(@RequestBody Cliente cliente){
+        return clienteService.alta(cliente);
+    }
+    //Este método es una forma haciendo directamente con objetos, pero existe otro método más comercial
+    @PutMapping("/clientes/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Cliente modificar(@RequestBody Cliente cliente,
+                             @PathVariable Long id){
+
+        return clienteService.modificar(cliente,id);
+    }
+
+    @DeleteMapping("/clientes/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void eliminar(@PathVariable Long id){
+        clienteService.eliminar(id);
     }
 }

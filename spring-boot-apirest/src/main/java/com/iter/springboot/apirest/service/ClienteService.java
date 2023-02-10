@@ -12,7 +12,7 @@ public interface ClienteService {
 
     Cliente alta(Cliente cliente);
 
-    Cliente modificar(Cliente cliente);
+    Cliente modificar(Cliente cliente,Long id);
 
     void eliminar(Long id);
 }

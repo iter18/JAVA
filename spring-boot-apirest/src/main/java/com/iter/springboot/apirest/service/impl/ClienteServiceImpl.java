@@ -35,7 +35,7 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public Cliente modificar(Cliente cliente) {
+    public Cliente modificar(Cliente cliente, Long id) {
         return null;
     }
 
