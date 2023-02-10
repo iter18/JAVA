@@ -7,4 +7,12 @@ import java.util.List;
 public interface ClienteService {
 
     List<Cliente> buscar();
+
+    Cliente buscar(Long id);
+
+    Cliente alta(Cliente cliente);
+
+    Cliente modificar(Cliente cliente);
+
+    void eliminar(Long id);
 }

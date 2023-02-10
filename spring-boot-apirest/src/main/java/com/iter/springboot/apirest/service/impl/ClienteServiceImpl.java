@@ -23,4 +23,24 @@ public class ClienteServiceImpl implements ClienteService {
 
         return clienteRepository.findAll();
     }
+
+    @Override
+    public Cliente buscar(Long id) {
+        return clienteRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Cliente alta(Cliente cliente) {
+        return null;
+    }
+
+    @Override
+    public Cliente modificar(Cliente cliente) {
+        return null;
+    }
+
+    @Override
+    public void eliminar(Long id) {
+        clienteRepository.deleteById(id);
+    }
 }
