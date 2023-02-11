@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -30,16 +31,25 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
+    @Transactional
     public Cliente alta(Cliente cliente) {
-        return null;
+        Cliente clienteA = Cliente.builder()
+                .nombre(cliente.getNombre())
+                .email(cliente.getEmail())
+                .apellido(cliente.getApellido())
+                .createAt(new Date())
+                .build();
+        return clienteRepository.save(clienteA);
     }
 
     @Override
+    @Transactional
     public Cliente modificar(Cliente cliente, Long id) {
         return null;
     }
 
     @Override
+    @Transactional
     public void eliminar(Long id) {
         clienteRepository.deleteById(id);
     }

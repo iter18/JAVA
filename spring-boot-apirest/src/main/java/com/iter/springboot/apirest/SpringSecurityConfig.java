@@ -26,7 +26,7 @@ public class SpringSecurityConfig  {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 // by default uses a Bean by the name of corsConfigurationSource
-                .cors(withDefaults());
+                .cors(withDefaults()).csrf().disable();
         return http.build();
     }
 

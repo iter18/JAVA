@@ -35,7 +35,7 @@ public class ClienteController {
     }
 
     //Este método es una forma haciendo directamente con objetos, pero existe otro método más comercial
-    @PostMapping("clientes")
+    @PostMapping("/clientes")
     @ResponseStatus(HttpStatus.CREATED)
     public Cliente alta(@RequestBody Cliente cliente){
         return clienteService.alta(cliente);
