@@ -45,7 +45,8 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public Cliente modificar(Cliente cliente, Long id) {
-        return null;
+
+        return clienteRepository.saveAndFlush(cliente);
     }
 
     @Override
