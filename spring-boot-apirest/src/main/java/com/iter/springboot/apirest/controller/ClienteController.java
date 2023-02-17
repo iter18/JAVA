@@ -27,11 +27,36 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
-    @GetMapping("/clientes")
+    /*@GetMapping("/clientes")
     public List<Cliente> index(){
         return clienteService.buscar();
+    }*/
+
+    @GetMapping("/clientes")
+    public ResponseEntity<HashMap<String,Object>> buscar(){
+        HashMap<String,Object> map = new HashMap<>();
+        try {
+            List<Cliente> clienteList = clienteService.buscar();
+            map.put("data",clienteList);
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }catch (DataAccessException e){
+            map.put("mensaje", "Error al realizar consulta en DB");
+            map.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch(Exception e){
+            map.put("error", e.getMessage());
+            return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
+    //Este método es una forma haciendo directamente con objetos, pero existe otro método más comercial para retornar mensajes y objetos
+    /*@GetMapping("/clientes/{id}")
+    public Cliente buscar(@PathVariable Long id){
+        Cliente cliente = clienteService.buscar(id);
+        return cliente;
+    }*/
+    //De esta manera se hace para retornar una estructura más comercial para manejar json
     @GetMapping("/clientes/{id}")
     public ResponseEntity<HashMap<String,Object>> buscar(@PathVariable Long id){
 
