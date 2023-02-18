@@ -2,6 +2,7 @@ package com.iter.springboot.apirest.service;
 
 import com.iter.springboot.apirest.modelo.Cliente;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface ClienteService {
@@ -11,6 +12,7 @@ public interface ClienteService {
     Cliente buscar(Long id);
 
     Cliente alta(Cliente cliente);
+    Cliente altaHM(HashMap<String,Object> cliente);
 
     Cliente modificar(Cliente cliente,Long id);
 

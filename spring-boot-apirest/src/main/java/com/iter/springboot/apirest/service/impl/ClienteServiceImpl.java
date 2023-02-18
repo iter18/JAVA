@@ -1,5 +1,6 @@
 package com.iter.springboot.apirest.service.impl;
 
+import antlr.StringUtils;
 import com.iter.springboot.apirest.modelo.Cliente;
 import com.iter.springboot.apirest.repository.ClienteRepository;
 import com.iter.springboot.apirest.service.ClienteService;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -37,6 +39,19 @@ public class ClienteServiceImpl implements ClienteService {
                 .nombre(cliente.getNombre())
                 .email(cliente.getEmail())
                 .apellido(cliente.getApellido())
+                .createAt(new Date())
+                .build();
+        return clienteRepository.save(clienteA);
+    }
+
+    @Override
+    @Transactional
+    public Cliente altaHM(HashMap<String, Object> cliente) {
+
+        Cliente clienteA = Cliente.builder()
+                .nombre((String) cliente.get("nombre"))
+                .email((String) cliente.get("email"))
+                .apellido((String)cliente.get("apellido"))
                 .createAt(new Date())
                 .build();
         return clienteRepository.save(clienteA);

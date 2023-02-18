@@ -89,14 +89,30 @@ public class ClienteController {
         return clienteService.alta(cliente);
     }*/
 
+
+    /*
+    * Existen varias formas de pedir un objeto a un rest:
+    * 1 por tipo de objeto = entity
+    * 2 por tipo de objeto = dto
+    * 3 HashMap<key,value>  = es para simular un objeto generico y no encasillar hacia un tipo de objeto.
+    *  Puede haber el caso en que existan 2 objetos con mismos atributos y se pueda reutilizar el método
+    *
+    * Dependiendo la necesidad es el que se usara.
+    * */
     @PostMapping("/clientes")
-    public ResponseEntity<HashMap<String,Object>> alta(@RequestBody Cliente cliente){
+    //Ejemplo con objeto entity
+            // public ResponseEntity<HashMap<String,Object>> alta(@RequestBody Cliente cliente){
+    //Ejmplo usando un HashMap de forma  generica para no esterotipar a un objeto especifico
+    public ResponseEntity<HashMap<String,Object>> alta(@RequestBody HashMap<String,Object> cliente){
         HashMap<String,Object> map = new HashMap<>();
         try {
-
+            Cliente cliente1 = clienteService.altaHM(cliente);
+            map.put("reg",cliente1);
+            map.put("mensaje","Cliente creado con éxito!");
+            return new ResponseEntity<>(map,HttpStatus.CREATED);
 
         }catch (DataAccessException e){
-            map.put("mensaje", "Error al realizar consulta en DB");
+            map.put("mensaje", "Error al realizar transacción  en DB");
             map.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
         }
