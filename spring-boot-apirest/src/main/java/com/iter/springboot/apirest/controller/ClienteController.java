@@ -83,10 +83,28 @@ public class ClienteController {
     }
 
     //Este método es una forma haciendo directamente con objetos, pero existe otro método más comercial para retornar mensajes y objetos
-    @PostMapping("/clientes")
+    /*@PostMapping("/clientes")
     @ResponseStatus(HttpStatus.CREATED)
     public Cliente alta(@RequestBody Cliente cliente){
         return clienteService.alta(cliente);
+    }*/
+
+    @PostMapping("/clientes")
+    public ResponseEntity<HashMap<String,Object>> alta(@RequestBody Cliente cliente){
+        HashMap<String,Object> map = new HashMap<>();
+        try {
+
+
+        }catch (DataAccessException e){
+            map.put("mensaje", "Error al realizar consulta en DB");
+            map.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch(Exception e){
+            map.put("error", e.getMessage());
+            return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
     //Este método es una forma haciendo directamente con objetos, pero existe otro método más comercial
     @PutMapping("/clientes/{id}")
