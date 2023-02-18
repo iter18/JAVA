@@ -124,16 +124,55 @@ public class ClienteController {
     }
     //Este método es una forma haciendo directamente con objetos, pero existe otro método más comercial
     @PutMapping("/clientes/{id}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Cliente modificar(@RequestBody Cliente cliente,
+    public ResponseEntity<HashMap<String,Object>> modificar(@RequestBody Cliente cliente,
                              @PathVariable Long id){
+        HashMap<String,Object> map = new HashMap<>();
+        try{
+            Cliente cli =clienteService.modificar(cliente,id);
+            map.put("reg",cli);
+            map.put("mensaje","Registro modificado éxitosamente");
+            return new ResponseEntity<>(map,HttpStatus.CREATED);
 
-        return clienteService.modificar(cliente,id);
+        }catch (IllegalArgumentException ex){
+            map.put("mensaje",ex.getMessage());
+            map.put("error","error.io");
+            return new ResponseEntity<>(map,HttpStatus.CONFLICT);
+
+        }catch(DataAccessException e){
+            map.put("mensaje", "Error al realizar transacción  en DB");
+            map.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch(Exception e){
+            map.put("error", e.getMessage());
+            return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @DeleteMapping("/clientes/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void eliminar(@PathVariable Long id){
-        clienteService.eliminar(id);
+    public ResponseEntity<HashMap<String,Object>> eliminar(@PathVariable Long id){
+
+        HashMap<String,Object> map = new HashMap<>();
+        try{
+            clienteService.eliminar(id);
+            map.put("mensaje","Registro eliminado éxitosamente");
+            return new ResponseEntity<>(map,HttpStatus.NO_CONTENT);
+
+        }catch (IllegalArgumentException ex){
+            map.put("mensaje",ex.getMessage());
+            map.put("error","error.io");
+            return new ResponseEntity<>(map,HttpStatus.CONFLICT);
+
+        }catch(DataAccessException e){
+            map.put("mensaje", "Error al realizar transacción  en DB");
+            map.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        catch(Exception e){
+            map.put("error", e.getMessage());
+            return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -61,7 +61,16 @@ public class ClienteServiceImpl implements ClienteService {
     @Transactional
     public Cliente modificar(Cliente cliente, Long id) {
 
-        return clienteRepository.saveAndFlush(cliente);
+        Cliente cli = this.buscar(id);
+        if(cli == null){
+            throw new IllegalArgumentException("EL registro no existe, verifique e intente nuevamente");
+        }else{
+            cli.setApellido(cliente.getApellido());
+            cli.setNombre(cliente.getNombre());
+            cli.setEmail(cliente.getEmail());
+            return clienteRepository.saveAndFlush(cli);
+        }
+
     }
 
     @Override
