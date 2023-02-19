@@ -29,6 +29,8 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public Cliente buscar(Long id) {
+
+        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("El registro no existe, verifique e intente nuevamente"));
         return clienteRepository.findById(id).orElse(null);
     }
 

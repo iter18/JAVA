@@ -63,13 +63,13 @@ public class ClienteController {
         HashMap<String, Object> map = new HashMap<>();
         try{
              Cliente cliente = clienteService.buscar(id);
-
-             if(cliente == null){
-                 map.put("mensaje","El cliente que desea buscar no existe!!");
-                 return new ResponseEntity<>(map,HttpStatus.NOT_FOUND);
-             }
              map.put("reg",cliente);
              return new ResponseEntity<>(map,HttpStatus.OK);
+        }catch (IllegalArgumentException ex){
+            map.put("mensaje",ex.getMessage());
+            map.put("error","error.io");
+            return new ResponseEntity<>(map,HttpStatus.CONFLICT);
+
         }catch (DataAccessException e){
             map.put("mensaje", "Error al realizar consulta en DB");
             map.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
