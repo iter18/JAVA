@@ -70,7 +70,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Autowired
-
     public void configureGlobal(AuthenticationManagerBuilder builder) throws Exception{
         /*De momento el método será tener los usuarios en memoria*/
         /*PasswordEncoder encoder = passwordEncoder;

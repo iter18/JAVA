@@ -10,6 +10,7 @@ import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.Collection;
 import java.util.Date;
 import static com.iter.springboot.apirest.parametros.parametros.*;
 
+@Component
 public class JwtServiceImpl implements JwtService {
 
 
