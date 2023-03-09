@@ -93,15 +93,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             throws IOException, ServletException {
         //obtengo el token creado de la clase service
         String token = jwtService.create(authResult);
+        response.setContentType("application/json");
         response.addHeader(HEADER_STRING,TOKEN_PREFIX+token);
 
-        Map<String,Object> body = new HashMap<>();
-        body.put("token", token);
-        body.put("user", authResult.getPrincipal() );
-        body.put("mensaje",String.format("Hola %s, has iniciado sesión con éxito!",authResult.getName()));
-        response.getWriter().write(new ObjectMapper().writeValueAsString(body));
+        Map<String,Object> data = new HashMap<>();
+        data.put("token", token);
+        data.put("user", authResult.getPrincipal() );
+        /*data.put("mensaje",String.format("Hola %s, has iniciado sesión con éxito!",authResult.getName()));*/
+        response.getWriter().write(new ObjectMapper().writeValueAsString(data));
         response.setStatus(200);
-        response.setContentType("application/json");
+
 
     }
 
