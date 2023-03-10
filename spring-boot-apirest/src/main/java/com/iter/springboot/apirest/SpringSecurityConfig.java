@@ -45,16 +45,21 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .cors().and().csrf().disable()
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic()
                 .and()
+                .exceptionHandling()
+                .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .cors(withDefaults()).csrf().disable()
-                .addFilter(new JwtAuthenticationFilter(authenticationManager(),jwtService))
+                .headers()
+                .xssProtection();
+
+                http.addFilter(new JwtAuthenticationFilter(authenticationManager(),jwtService))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(),jwtService));
     }
 
@@ -64,9 +69,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("*","http://localhost:4200"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList("Access-Control-Allow-Origin","Access-Control-Allow-Methods","Access-Control-Allow-Headers","Access-Control-Max-Age"
                 ,"Access-Control-Request-Headers","Access-Control-Request-Method","Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
