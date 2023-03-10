@@ -12,7 +12,7 @@ public interface ClienteService {
     Cliente buscar(Long id);
 
     Cliente alta(Cliente cliente);
-    Cliente altaHM(HashMap<String,Object> cliente);
+    Cliente altaHM(HashMap<String,?> cliente);
 
     Cliente modificar(Cliente cliente,Long id);
 

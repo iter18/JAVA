@@ -48,7 +48,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     @Transactional
-    public Cliente altaHM(HashMap<String, Object> cliente) {
+    public Cliente altaHM(HashMap<String, ?> cliente) {
 
         Cliente clienteA = Cliente.builder()
                 .nombre((String) cliente.get("nombre"))

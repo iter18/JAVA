@@ -103,7 +103,7 @@ public class ClienteController {
     //Ejemplo con objeto entity
             // public ResponseEntity<HashMap<String,Object>> alta(@RequestBody Cliente cliente){
     //Ejmplo usando un HashMap de forma  generica para no esterotipar a un objeto especifico
-    public ResponseEntity<HashMap<String,Object>> alta(@RequestBody HashMap<String,Object> cliente){
+    public ResponseEntity<HashMap<String,Object>> alta(@RequestBody HashMap<String,?> cliente){
         HashMap<String,Object> map = new HashMap<>();
         try {
             Cliente cliente1 = clienteService.altaHM(cliente);
