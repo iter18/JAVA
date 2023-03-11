@@ -10,9 +10,9 @@ public interface ClienteService {
 
     List<ClienteDto> buscar();
 
-    Cliente buscar(Long id);
+    ClienteDto buscar(Long id);
 
-    Cliente alta(Cliente cliente);
+    ClienteDto alta(ClienteDto cliente);
     Cliente altaHM(HashMap<String,?> cliente);
 
     ClienteDto modificar(ClienteDto cliente,Long id);

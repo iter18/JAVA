@@ -30,9 +30,10 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     public List<ClienteDto> buscar() {
 
-        /*Forma de llenar un DTO de forma Artesanal o manual */
+
         List<Cliente> clienteList = clienteRepository.findAll();
-        List<ClienteDto> listaClienteDto = clienteList.stream().map(cliente -> {
+        /*Forma de llenar un DTO de forma Artesanal o manual y crear lista */
+       /* List<ClienteDto> listaClienteDto = clienteList.stream().map(cliente -> {
             ClienteDto clienteDto = ClienteDto.builder()
                     .id(cliente.getId())
                     .nombre(cliente.getNombre())
@@ -41,27 +42,33 @@ public class ClienteServiceImpl implements ClienteService {
                     .fechaCreacion(cliente.getCreateAt())
                     .build();
             return clienteDto;
-        }).collect(Collectors.toList());
-        return listaClienteDto;
+        }).collect(Collectors.toList());*/
+
+        //Forma de hacerlo con dataMapper -> Mapstruct
+        return clienteMapper.tolistDto(clienteList);
     }
 
     @Override
-    public Cliente buscar(Long id) {
+    public ClienteDto buscar(Long id) {
 
         Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("El registro no existe, verifique e intente nuevamente"));
-        return clienteRepository.findById(id).orElse(null);
+        return clienteMapper.toDto(cliente);
     }
 
     @Override
     @Transactional
-    public Cliente alta(Cliente cliente) {
-        Cliente clienteA = Cliente.builder()
+    public ClienteDto alta(ClienteDto clienteDto) {
+       /* Cliente clienteA = Cliente.builder()
                 .nombre(cliente.getNombre())
                 .email(cliente.getEmail())
                 .apellido(cliente.getApellido())
                 .createAt(new Date())
-                .build();
-        return clienteRepository.save(clienteA);
+                .build();*/
+        Cliente cliente = clienteMapper.toEntity(clienteDto);
+        cliente.setCreateAt(new Date());
+        cliente = clienteRepository.save(cliente);
+
+        return clienteMapper.toDto(cliente);
     }
 
     @Override
@@ -81,10 +88,9 @@ public class ClienteServiceImpl implements ClienteService {
     @Transactional
     public ClienteDto modificar(ClienteDto cliente, Long id) {
 
-        Cliente cli = this.buscar(id);
-        if(cli == null){
-            throw new IllegalArgumentException("EL registro no existe, verifique e intente nuevamente");
-        }
+        Cliente cli = clienteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("EL registro no existe, verifique e intente nuevamente"));
+
             cli.setApellido(cliente.getApellido());
             cli.setNombre(cliente.getNombre());
             cli.setEmail(cliente.getEmail());

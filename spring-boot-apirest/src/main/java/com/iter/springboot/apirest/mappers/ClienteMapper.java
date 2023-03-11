@@ -5,11 +5,18 @@ import com.iter.springboot.apirest.modelo.Cliente;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+import java.util.Map;
+
 @Mapper(componentModel = "spring")
 public interface ClienteMapper {
 
     @Mapping(target = "fechaCreacion", source = "createAt")
     ClienteDto toDto(Cliente cliente);
+
+    List<ClienteDto> tolistDto(List<Cliente> clienteList);
+
+    Cliente toEntity(ClienteDto clienteDto);
 
 
 }

@@ -64,7 +64,7 @@ public class ClienteController {
 
         HashMap<String, Object> map = new HashMap<>();
         try{
-             Cliente cliente = clienteService.buscar(id);
+             ClienteDto cliente = clienteService.buscar(id);
              map.put("reg",cliente);
              return new ResponseEntity<>(map,HttpStatus.OK);
         }catch (IllegalArgumentException ex){
@@ -102,14 +102,15 @@ public class ClienteController {
     * Dependiendo la necesidad es el que se usara.
     * */
     @PostMapping("/clientes")
-    //Ejemplo con objeto entity
-            // public ResponseEntity<HashMap<String,Object>> alta(@RequestBody Cliente cliente){
+    //Ejemplo con objeto DTO
+    public ResponseEntity<HashMap<String,Object>> alta(@RequestBody ClienteDto clienteDto){
     //Ejmplo usando un HashMap de forma  generica para no esterotipar a un objeto especifico
-    public ResponseEntity<HashMap<String,Object>> alta(@RequestBody HashMap<String,?> cliente){
+   // public ResponseEntity<HashMap<String,Object>> alta(@RequestBody HashMap<String,?> cliente){
         HashMap<String,Object> map = new HashMap<>();
         try {
-            Cliente cliente1 = clienteService.altaHM(cliente);
-            map.put("reg",cliente1);
+           // ClienteDto cliente1 = clienteService.altaHM(cliente);
+            ClienteDto cliente = clienteService.alta(clienteDto);
+            map.put("reg",cliente);
             map.put("mensaje","Cliente creado con éxito!");
             return new ResponseEntity<>(map,HttpStatus.CREATED);
 
