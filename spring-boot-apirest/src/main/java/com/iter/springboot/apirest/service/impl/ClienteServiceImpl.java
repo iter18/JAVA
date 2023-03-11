@@ -2,6 +2,7 @@ package com.iter.springboot.apirest.service.impl;
 
 import antlr.StringUtils;
 import com.iter.springboot.apirest.dtos.ClienteDto;
+import com.iter.springboot.apirest.mappers.ClienteMapper;
 import com.iter.springboot.apirest.modelo.Cliente;
 import com.iter.springboot.apirest.repository.ClienteRepository;
 import com.iter.springboot.apirest.service.ClienteService;
@@ -19,6 +20,9 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Slf4j
 public class ClienteServiceImpl implements ClienteService {
+
+    @Autowired
+    ClienteMapper clienteMapper;
 
     @Autowired
     ClienteRepository clienteRepository;
@@ -86,13 +90,16 @@ public class ClienteServiceImpl implements ClienteService {
             cli.setEmail(cliente.getEmail());
           Cliente client = clienteRepository.saveAndFlush(cli);
           //Forma manual de convertir un entity a DTO
-            ClienteDto clienteDto = ClienteDto.builder()
+            /*ClienteDto clienteDto = ClienteDto.builder()
                     .id(client.getId())
                     .nombre(client.getNombre())
                     .apellido(client.getApellido())
                     .email(client.getEmail())
                     .fechaCreacion(client.getCreateAt())
-                    .build();
+                    .build();*/
+
+            //Forma de hacerlo automatico con Mapstruct
+            ClienteDto clienteDto = clienteMapper.toDto(client);
             return clienteDto;
 
 
