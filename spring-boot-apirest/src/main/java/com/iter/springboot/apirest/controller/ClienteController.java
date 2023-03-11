@@ -1,6 +1,7 @@
 package com.iter.springboot.apirest.controller;
 
 
+import com.iter.springboot.apirest.dtos.ClienteDto;
 import com.iter.springboot.apirest.modelo.Cliente;
 import com.iter.springboot.apirest.service.ClienteService;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Se puede configurar los permisos de métodos permitidos al REST, GET,POST,DELETE,etc.
@@ -33,10 +35,10 @@ public class ClienteController {
     }*/
 
     @GetMapping("/clientes")
-    public ResponseEntity<HashMap<String,Object>> buscar(){
-        HashMap<String,Object> map = new HashMap<>();
+    public ResponseEntity<Map<String,Object>> buscar(){
+        Map<String,Object> map = new HashMap<>();
         try {
-            List<Cliente> clienteList = clienteService.buscar();
+            List<ClienteDto> clienteList = clienteService.buscar();
             map.put("data",clienteList);
             return new ResponseEntity<>(map,HttpStatus.OK);
         }catch (DataAccessException e){
@@ -124,12 +126,12 @@ public class ClienteController {
     }
     //Este método es una forma haciendo directamente con objetos, pero existe otro método más comercial
     @PutMapping("/clientes/{id}")
-    public ResponseEntity<HashMap<String,Object>> modificar(@RequestBody Cliente cliente,
+    public ResponseEntity<Map<String,Object>> modificar(@RequestBody ClienteDto cliente,
                              @PathVariable Long id){
-        HashMap<String,Object> map = new HashMap<>();
+        Map<String,Object> map = new HashMap<>();
         try{
-            Cliente cli =clienteService.modificar(cliente,id);
-            map.put("reg",cli);
+            ClienteDto clienteDto =clienteService.modificar(cliente,id);
+            map.put("reg",clienteDto);
             map.put("mensaje","Registro modificado éxitosamente");
             return new ResponseEntity<>(map,HttpStatus.CREATED);
 

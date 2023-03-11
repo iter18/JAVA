@@ -1,6 +1,7 @@
 package com.iter.springboot.apirest.service.impl;
 
 import antlr.StringUtils;
+import com.iter.springboot.apirest.dtos.ClienteDto;
 import com.iter.springboot.apirest.modelo.Cliente;
 import com.iter.springboot.apirest.repository.ClienteRepository;
 import com.iter.springboot.apirest.service.ClienteService;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,9 +24,21 @@ public class ClienteServiceImpl implements ClienteService {
     ClienteRepository clienteRepository;
 
     @Override
-    public List<Cliente> buscar() {
+    public List<ClienteDto> buscar() {
 
-        return clienteRepository.findAll();
+        /*Forma de llenar un DTO de forma Artesanal o manual */
+        List<Cliente> clienteList = clienteRepository.findAll();
+        List<ClienteDto> listaClienteDto = clienteList.stream().map(cliente -> {
+            ClienteDto clienteDto = ClienteDto.builder()
+                    .id(cliente.getId())
+                    .nombre(cliente.getNombre())
+                    .apellido(cliente.getApellido())
+                    .email(cliente.getEmail())
+                    .fechaCreacion(cliente.getCreateAt())
+                    .build();
+            return clienteDto;
+        }).collect(Collectors.toList());
+        return listaClienteDto;
     }
 
     @Override
@@ -61,17 +75,26 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     @Transactional
-    public Cliente modificar(Cliente cliente, Long id) {
+    public ClienteDto modificar(ClienteDto cliente, Long id) {
 
         Cliente cli = this.buscar(id);
         if(cli == null){
             throw new IllegalArgumentException("EL registro no existe, verifique e intente nuevamente");
-        }else{
+        }
             cli.setApellido(cliente.getApellido());
             cli.setNombre(cliente.getNombre());
             cli.setEmail(cliente.getEmail());
-            return clienteRepository.saveAndFlush(cli);
-        }
+          Cliente client = clienteRepository.saveAndFlush(cli);
+          //Forma manual de convertir un entity a DTO
+            ClienteDto clienteDto = ClienteDto.builder()
+                    .id(client.getId())
+                    .nombre(client.getNombre())
+                    .apellido(client.getApellido())
+                    .email(client.getEmail())
+                    .fechaCreacion(client.getCreateAt())
+                    .build();
+            return clienteDto;
+
 
     }
 
