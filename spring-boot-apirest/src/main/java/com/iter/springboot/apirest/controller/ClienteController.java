@@ -154,7 +154,6 @@ public class ClienteController {
     }
 
     @DeleteMapping("/clientes/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<HashMap<String,Object>> eliminar(@PathVariable Long id){
 
         HashMap<String,Object> map = new HashMap<>();
