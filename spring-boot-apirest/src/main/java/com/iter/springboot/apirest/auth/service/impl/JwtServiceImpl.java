@@ -7,6 +7,7 @@ import com.iter.springboot.apirest.auth.service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,6 +20,7 @@ import java.util.Date;
 import static com.iter.springboot.apirest.parametros.parametros.*;
 
 @Component
+@Slf4j
 public class JwtServiceImpl implements JwtService {
 
 
@@ -51,6 +53,7 @@ public class JwtServiceImpl implements JwtService {
                 getClaims(token);
                 return true;
         }catch (JwtException | IllegalArgumentException e){
+            log.info("error Aquiiiiiii");
             e.printStackTrace();
             return false;
         }

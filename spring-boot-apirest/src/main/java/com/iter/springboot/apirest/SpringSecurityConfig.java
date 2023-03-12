@@ -18,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -49,8 +50,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .anyRequest().authenticated()
                 .and()
-                .httpBasic()
-                .and()
                 .exceptionHandling()
                 .and()
                 .sessionManagement()
@@ -60,7 +59,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .xssProtection();
 
                 http.addFilter(new JwtAuthenticationFilter(authenticationManager(),jwtService))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(),jwtService));
+                .addFilterBefore(new JwtAuthorizationFilter(authenticationManager(),jwtService), UsernamePasswordAuthenticationFilter.class);
     }
 
 
