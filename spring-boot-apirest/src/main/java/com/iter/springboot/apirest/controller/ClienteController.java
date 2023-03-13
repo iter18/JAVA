@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -60,9 +61,12 @@ public class ClienteController {
     }*/
     //De esta manera se hace para retornar una estructura más comercial para manejar json
     @GetMapping("/clientes/{id}")
-    public ResponseEntity<HashMap<String,Object>> buscar(@PathVariable Long id){
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<ClienteDto> buscar(@PathVariable Long id){
 
         HashMap<String, Object> map = new HashMap<>();
+        return ResponseEntity.ok(clienteService.buscar(id));
+        /* Forma de hacerlo sin @ControllerAdvice para manejar las excepciones
         try{
              ClienteDto cliente = clienteService.buscar(id);
              map.put("reg",cliente);
@@ -80,7 +84,7 @@ public class ClienteController {
         catch(Exception e){
             map.put("error", e.getMessage());
             return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        }*/
 
     }
 

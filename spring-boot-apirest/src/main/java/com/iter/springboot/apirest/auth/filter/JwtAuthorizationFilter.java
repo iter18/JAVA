@@ -74,7 +74,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
            json.put("path",request.getRequestURI());
            response.setContentType("application/son");
            response.getWriter().print(json);
-           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+           response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
        }
     }
 
