@@ -53,7 +53,7 @@ public class JwtServiceImpl implements JwtService {
                 getClaims(token);
                 return true;
         }catch (JwtException | IllegalArgumentException e){
-            log.info("error Aquiiiiiii");
+            log.error("error Aquiiiiiii");
             e.printStackTrace();
             return false;
         }

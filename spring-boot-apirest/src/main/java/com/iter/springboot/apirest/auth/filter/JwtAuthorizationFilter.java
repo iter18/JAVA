@@ -62,7 +62,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
                chain.doFilter(request, response);
        }catch (ExpiredJwtException | MalformedJwtException | SignatureException | UnsupportedJwtException | IllegalArgumentException e){
-           log.info("errrrrrorrrr"+ e.getClass().getSimpleName());
+           log.error("errrrrrorrrr"+ e.getClass().getSimpleName());
            JSONObject json = new JSONObject();
            Date date = new Date();
            Long timeError = date.getTime();
