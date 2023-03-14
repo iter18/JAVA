@@ -35,7 +35,9 @@ public class ClienteController {
         return clienteService.buscar();
     }*/
 
+    /* Forma de hacerlo con Map y objetos genericos para enviar con errores y responder el DTO
     @GetMapping("/clientes")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public ResponseEntity<Map<String,Object>> buscar(){
         Map<String,Object> map = new HashMap<>();
         try {
@@ -51,6 +53,12 @@ public class ClienteController {
             map.put("error", e.getMessage());
             return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }*/
+    //Forma de hacerlo con clase ExceptionHelper
+    @GetMapping("/clientes")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
+    public ResponseEntity<List<ClienteDto>> buscar(){
+            return ResponseEntity.ok(clienteService.buscar());
     }
 
     //Este método es una forma haciendo directamente con objetos, pero existe otro método más comercial para retornar mensajes y objetos
@@ -105,8 +113,9 @@ public class ClienteController {
     *
     * Dependiendo la necesidad es el que se usara.
     * */
-    @PostMapping("/clientes")
     //Ejemplo con objeto DTO
+   /* @PostMapping("/clientes")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<HashMap<String,Object>> alta(@RequestBody ClienteDto clienteDto){
     //Ejmplo usando un HashMap de forma  generica para no esterotipar a un objeto especifico
    // public ResponseEntity<HashMap<String,Object>> alta(@RequestBody HashMap<String,?> cliente){
@@ -128,9 +137,16 @@ public class ClienteController {
             return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }*/
+
+    @PostMapping("/clientes")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<ClienteDto> alta(@RequestBody ClienteDto clienteDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.alta(clienteDto));
     }
     //Este método es una forma haciendo directamente con objetos, pero existe otro método más comercial
-    @PutMapping("/clientes/{id}")
+    /*@PutMapping("/clientes/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<Map<String,Object>> modificar(@RequestBody ClienteDto cliente,
                              @PathVariable Long id){
         Map<String,Object> map = new HashMap<>();
@@ -155,9 +171,17 @@ public class ClienteController {
             return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }*/
+
+    @PutMapping("/clientes/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<ClienteDto> modificar(@RequestBody ClienteDto cliente,
+                                                        @PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.modificar(cliente,id));
     }
 
-    @DeleteMapping("/clientes/{id}")
+    /*@DeleteMapping("/clientes/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<HashMap<String,Object>> eliminar(@PathVariable Long id){
 
         HashMap<String,Object> map = new HashMap<>();
@@ -180,5 +204,11 @@ public class ClienteController {
             map.put("error", e.getMessage());
             return new ResponseEntity<>(map,HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }*/
+    @DeleteMapping("/clientes/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<HttpStatus> eliminar(@PathVariable Long id){
+        clienteService.eliminar(id);
+        return ResponseEntity.noContent().build();
     }
 }

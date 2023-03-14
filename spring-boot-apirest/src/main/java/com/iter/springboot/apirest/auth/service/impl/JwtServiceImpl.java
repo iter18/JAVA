@@ -54,7 +54,6 @@ public class JwtServiceImpl implements JwtService {
                 return true;
         }catch (JwtException | IllegalArgumentException e){
             log.error("error Aquiiiiiii");
-            e.printStackTrace();
             return false;
         }
 
