@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "users")
+@Table(name = "USERS")
 public class Usuario implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -31,6 +31,9 @@ public class Usuario implements Serializable {
     private  Boolean enabled;
 
     @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "USER_ID")
     private List<Rol> roles;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "usuario", cascade = CascadeType.ALL)
+    private Cliente cliente;
 }

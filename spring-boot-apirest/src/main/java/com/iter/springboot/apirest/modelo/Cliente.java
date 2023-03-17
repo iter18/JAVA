@@ -12,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "clientes")
+@Table(name = "CLIENTES")
 public class Cliente implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -27,8 +27,12 @@ public class Cliente implements Serializable {
     @Column(nullable = false,unique = true)
     private String email;
 
-    @Column(name = "create_at")
+    @Column(name = "FECHA_CREACION")
     @Temporal(TemporalType.DATE)
     private Date createAt;
+
+    @OneToOne(fetch =  FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ID_USUARIO")
+    private Usuario usuario;
 
 }
