@@ -22,4 +22,12 @@ public class AutorSpecification {
         };
     }
 
+    public static Specification<Autor>likeNombre(String nombre){
+        return (root, query, builder) ->{
+            if (StringUtils.isEmpty(nombre))
+                return builder.conjunction();
+            return builder.like(builder.upper(root.get("nombre")),"%"+nombre.toUpperCase()+"%" );
+        };
+    }
+
 }

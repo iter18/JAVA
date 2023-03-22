@@ -9,4 +9,6 @@ public interface AutorService {
     AutorDto alta(AutorDto autorDto);
 
     List<AutorDto> buscar();
+
+    List<AutorDto>buscar(String nombre);
 }

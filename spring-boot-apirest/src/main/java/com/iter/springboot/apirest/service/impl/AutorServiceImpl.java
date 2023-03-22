@@ -7,14 +7,17 @@ import com.iter.springboot.apirest.repository.AutorRepository;
 import com.iter.springboot.apirest.repository.specification.AutorSpecification;
 import com.iter.springboot.apirest.service.AutorService;
 import io.jsonwebtoken.lang.Assert;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class AutorServiceImpl implements AutorService {
 
     @Autowired
@@ -40,5 +43,11 @@ public class AutorServiceImpl implements AutorService {
     public List<AutorDto> buscar() {
 
         return autorMapper.toListDto(autorRepository.findAll());
+    }
+
+    @Override
+    public List<AutorDto> buscar(String nombre) {
+        Specification<Autor> filtro = AutorSpecification.likeNombre(nombre);
+        return autorMapper.toListDto(autorRepository.findAll(filtro));
     }
 }
