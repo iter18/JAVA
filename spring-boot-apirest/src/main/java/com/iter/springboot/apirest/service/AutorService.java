@@ -11,4 +11,10 @@ public interface AutorService {
     List<AutorDto> buscar();
 
     List<AutorDto>buscar(String nombre);
+
+    AutorDto buscar(Long id);
+
+    AutorDto modificar(Long id, AutorDto autorDto);
+
+    void eliminar(Long id);
 }

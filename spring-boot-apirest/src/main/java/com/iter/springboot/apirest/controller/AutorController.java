@@ -30,7 +30,22 @@ public class AutorController {
         return ResponseEntity.ok(autorService.buscar(nombre.orElse("")));
     }
 
-    
+    @GetMapping("/autores/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<AutorDto> buscar(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(autorService.buscar(id));
+    }
 
+    @PutMapping("/autores/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<AutorDto> modificar(@PathVariable Long id,@RequestBody AutorDto autorDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(autorService.modificar(id,autorDto));
+    }
 
+    @DeleteMapping("/autores/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<HttpStatus> eliminar(@PathVariable Long id){
+        autorService.eliminar(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }
