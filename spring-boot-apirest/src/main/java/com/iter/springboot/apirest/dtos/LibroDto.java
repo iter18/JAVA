@@ -2,7 +2,6 @@ package com.iter.springboot.apirest.dtos;
 
 
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,6 +13,8 @@ import java.util.Date;
 @Builder
 public class LibroDto implements Serializable {
 
+    private static final long serialVersionUID = -5495879811709755725L;
+    private Long id;
     private String isbn;
     private String titulo;
     private String categoria;

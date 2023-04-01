@@ -24,15 +24,14 @@ public class UploadFileServiceImpl implements UploadFileService {
     public String copy(MultipartFile file) {
         if(!file.isEmpty()){
             String uniqueFilename = UUID.randomUUID().toString()+ "_"+file.getOriginalFilename();
-            String rootPath = "C://Temp//uploads";
-            Path rootPathComplete = Paths.get(rootPath+"//"+uniqueFilename);
+            String rootPath = "C:/Temp/uploads";
+            Path rootPathComplete = Paths.get(rootPath+"/"+uniqueFilename);
             try{
                 Files.copy(file.getInputStream(), rootPathComplete);
             }catch (IOException e){
                 e.printStackTrace();
             }
-
-            return uniqueFilename;
+            return rootPathComplete.toString();
         }
             return null;
     }
