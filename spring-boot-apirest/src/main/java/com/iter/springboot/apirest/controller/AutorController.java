@@ -1,6 +1,7 @@
 package com.iter.springboot.apirest.controller;
 
 import com.iter.springboot.apirest.dtos.AutorDto;
+import com.iter.springboot.apirest.dtos.ComboDto;
 import com.iter.springboot.apirest.service.AutorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -47,5 +48,11 @@ public class AutorController {
     public ResponseEntity<HttpStatus> eliminar(@PathVariable Long id){
         autorService.eliminar(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+    @GetMapping("/autores/combo")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<List<ComboDto>> buscar(){
+
+        return ResponseEntity.status(HttpStatus.OK).body(autorService.buscarC());
     }
 }

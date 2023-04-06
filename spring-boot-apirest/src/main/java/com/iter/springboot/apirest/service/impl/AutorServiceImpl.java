@@ -1,6 +1,7 @@
 package com.iter.springboot.apirest.service.impl;
 
 import com.iter.springboot.apirest.dtos.AutorDto;
+import com.iter.springboot.apirest.dtos.ComboDto;
 import com.iter.springboot.apirest.mappers.AutorMapper;
 import com.iter.springboot.apirest.modelo.Autor;
 import com.iter.springboot.apirest.repository.AutorRepository;
@@ -13,6 +14,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.Tuple;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -81,5 +83,14 @@ public class AutorServiceImpl implements AutorService {
         Autor autor = autorRepository.findById(id)
                 .orElseThrow(()->new IllegalArgumentException("El registro a eliminar no existe"));
         autorRepository.delete(autor);
+    }
+
+    @Override
+    public List<ComboDto> buscarC() {
+        List<Tuple> registros = autorRepository.buscarC();
+        List<ComboDto> comboDtoList = registros.stream()
+                .map( reg ->new ComboDto(Integer.parseInt(reg.get("code").toString()),reg.get("valor").toString()))
+                .collect(Collectors.toList());
+        return comboDtoList;
     }
 }
