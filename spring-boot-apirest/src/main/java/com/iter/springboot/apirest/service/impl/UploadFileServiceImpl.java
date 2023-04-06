@@ -24,14 +24,14 @@ public class UploadFileServiceImpl implements UploadFileService {
     public String copy(MultipartFile file) {
         if(!file.isEmpty()){
             String uniqueFilename = UUID.randomUUID().toString()+ "_"+file.getOriginalFilename();
-            String rootPath = "C:/Temp/uploads";
+            String rootPath = "C:/Spring5/frontend/angular/angular/clientes-app/src/assets/uplodas";
             Path rootPathComplete = Paths.get(rootPath+"/"+uniqueFilename);
             try{
                 Files.copy(file.getInputStream(), rootPathComplete);
             }catch (IOException e){
                 e.printStackTrace();
             }
-            return rootPathComplete.toString();
+            return uniqueFilename;
         }
             return null;
     }
