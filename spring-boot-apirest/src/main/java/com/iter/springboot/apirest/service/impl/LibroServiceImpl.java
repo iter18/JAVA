@@ -1,9 +1,16 @@
 package com.iter.springboot.apirest.service.impl;
 
+import com.iter.springboot.apirest.dtos.AutorLibroDto;
 import com.iter.springboot.apirest.dtos.LibroDto;
+import com.iter.springboot.apirest.mappers.AutorLibroMapper;
+import com.iter.springboot.apirest.mappers.AutorMapper;
 import com.iter.springboot.apirest.mappers.LibroMapper;
+import com.iter.springboot.apirest.modelo.Autor;
+import com.iter.springboot.apirest.modelo.AutorLibro;
 import com.iter.springboot.apirest.modelo.Libro;
 import com.iter.springboot.apirest.repository.LibroRepository;
+import com.iter.springboot.apirest.service.AutorLibroService;
+import com.iter.springboot.apirest.service.AutorService;
 import com.iter.springboot.apirest.service.LibroService;
 import com.iter.springboot.apirest.service.UploadFileService;
 import io.jsonwebtoken.lang.Assert;
@@ -22,20 +29,36 @@ import java.util.List;
 public class LibroServiceImpl implements LibroService {
 
     @Autowired
-    LibroRepository libroRepository;
+    private LibroRepository libroRepository;
 
     @Autowired
-    UploadFileService uploadFileService;
+    private UploadFileService uploadFileService;
 
     @Autowired
-    LibroMapper libroMapper;
+    private AutorService autorService;
+
+    @Autowired
+    private LibroMapper libroMapper;
+
+    @Autowired
+    private AutorMapper autorMapper;
+
+    @Autowired
+    private AutorLibroService autorLibroService;
+
+    @Autowired
+    private AutorLibroMapper autorLibroMapper;
 
     @Override
     @Transactional
-    public LibroDto alta(LibroDto libroDto, MultipartFile imagen) {
+    public AutorLibroDto alta(LibroDto libroDto, MultipartFile imagen) {
         Assert.hasText(libroDto.getIsbn(),"Campo ISBN es requerido");
         Assert.hasText(libroDto.getTitulo(),"Campo TITULO es requerido");
         Assert.hasText(libroDto.getCategoria(),"Campo ISBN es requerido");
+        Assert.hasText(libroDto.getAutor(),"Campo Autor es requerido");
+
+
+        Autor autor = autorMapper.toEntity(autorService.buscar(Long.parseLong(libroDto.getAutor())));
 
         String rutaImagen = uploadFileService.copy(imagen);
 
@@ -43,15 +66,25 @@ public class LibroServiceImpl implements LibroService {
             throw new IllegalArgumentException("La imagen no se subio al directorio");
         }
 
+
         Libro libro = libroMapper.toEntity(libroDto);
         libro.setRutaFoto(rutaImagen);
         libro.setFechaRegistro(new Date());
 
-        return libroMapper.toDto(libroRepository.save(libro));
+        AutorLibro autorLibro = AutorLibro.builder()
+                .autor(autor)
+                .libro(libro)
+                .build();
+       AutorLibroDto autorLibroDto = autorLibroMapper.toDto(autorLibroService.alta(autorLibro));
+
+        autorLibroDto.setLibro(libroMapper.toDto(libroRepository.save(libro)));
+        return autorLibroDto;
     }
 
     @Override
-    public List<LibroDto> buscar() {
-        return libroMapper.toListDto(libroRepository.findAll());
+    public List<AutorLibroDto> buscar() {
+        List<AutorLibroDto> autorLibroDto = autorLibroMapper.toListDto(autorLibroService.buscar());
+
+        return autorLibroDto;
     }
 }

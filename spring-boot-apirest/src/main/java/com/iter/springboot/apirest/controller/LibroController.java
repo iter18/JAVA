@@ -1,6 +1,7 @@
 package com.iter.springboot.apirest.controller;
 
 
+import com.iter.springboot.apirest.dtos.AutorLibroDto;
 import com.iter.springboot.apirest.dtos.LibroDto;
 import com.iter.springboot.apirest.service.LibroService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +22,15 @@ public class LibroController {
 
     @GetMapping("/libros")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public ResponseEntity<List<LibroDto>> buscar(){
+    public ResponseEntity<List<AutorLibroDto>> buscar(){
         return ResponseEntity.status(HttpStatus.OK).body(libroService.buscar());
     }
 
     @PostMapping("/libros")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public ResponseEntity<LibroDto> alta(@ModelAttribute LibroDto libro,
+    public ResponseEntity<AutorLibroDto> alta(@ModelAttribute LibroDto libro,
                                   @RequestParam("imagen")MultipartFile imagen){
         return  ResponseEntity.status(HttpStatus.CREATED).body(libroService.alta(libro,imagen));
+
     }
 }
