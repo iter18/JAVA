@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,7 +39,18 @@ public class UploadFileServiceImpl implements UploadFileService {
 
     @Override
     public boolean delete(String filename) {
-        return false;
+        String rootPath = "C:/Spring5/frontend/angular/angular/clientes-app/src/assets/uplodas";
+        Path rootPathComplete = Paths.get(rootPath+"/"+filename);
+        File archivo = rootPathComplete.toFile();
+        boolean elimino = false;
+        if(archivo.exists() && archivo.canRead()){
+            if (archivo.delete()){
+                elimino = true;
+            }else {
+                elimino = false;
+            }
+        }
+        return elimino;
     }
 
     @Override

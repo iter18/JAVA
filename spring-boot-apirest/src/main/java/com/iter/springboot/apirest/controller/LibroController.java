@@ -33,4 +33,14 @@ public class LibroController {
         return  ResponseEntity.status(HttpStatus.CREATED).body(libroService.alta(libro,imagen));
 
     }
+
+    @PutMapping("/libros/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<AutorLibroDto> modificar(@PathVariable Long id,
+                                                    @ModelAttribute LibroDto libro,
+                                                    @RequestParam("imagen")MultipartFile imagen){
+        AutorLibroDto  autorLibroDto = libroService.modificar(id,libro,imagen);
+        return  ResponseEntity.status(HttpStatus.CREATED).body(autorLibroDto);
+
+    }
 }

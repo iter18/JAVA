@@ -22,4 +22,5 @@ public class LibroDto implements Serializable {
     private String rutaFoto;
     private String autor;
     private Date fechaRegistro;
+    private String idLibro;
 }

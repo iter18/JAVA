@@ -10,6 +10,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 public class AutorLibroDto implements Serializable {
+
+    private static final long serialVersionUID = 6163152443443958677L;
+    private Long id;
     private AutorDto autor;
 
     private LibroDto libro;
