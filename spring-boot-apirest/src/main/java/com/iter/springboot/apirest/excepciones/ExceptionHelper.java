@@ -31,6 +31,11 @@ public class ExceptionHelper {
         log.error("error{}",ex.getMessage());
         return new ResponseEntity<>(ex.getMessage(),HttpStatus.NO_CONTENT);
     }
+    @ExceptionHandler(value = {NumberFormatException.class})
+    public ResponseEntity<Object>handlerNumberFormatException(NumberFormatException ex){
+        log.error("error{}",ex.getMessage());
+        return new ResponseEntity<>("No se puede realizar un cast por que esta nulo",HttpStatus.NO_CONTENT);
+    }
 
     /*@ExceptionHandler(value = {Exception.class})
     public ResponseEntity<Object> handlerException(Exception ex){

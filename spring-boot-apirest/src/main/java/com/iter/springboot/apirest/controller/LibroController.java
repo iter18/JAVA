@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -22,8 +23,11 @@ public class LibroController {
 
     @GetMapping("/libros")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public ResponseEntity<List<AutorLibroDto>> buscar(){
-        return ResponseEntity.status(HttpStatus.OK).body(libroService.buscar());
+    public ResponseEntity<List<AutorLibroDto>> buscar(@RequestParam("isbnLibro")Optional<String> isbn,
+                                                      @RequestParam("tituloLibro") Optional<String> titulo,
+                                                      @RequestParam("autorLibro") Optional<String> autorCode){
+        Long autorId = autorCode.isEmpty() ? null : Long.parseLong(autorCode.get());
+        return ResponseEntity.status(HttpStatus.OK).body(libroService.buscar(isbn.orElse(""), titulo.orElse(""),autorId ));
     }
 
     @PostMapping("/libros")

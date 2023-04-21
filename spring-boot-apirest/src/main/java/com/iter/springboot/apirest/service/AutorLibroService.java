@@ -9,7 +9,7 @@ public interface AutorLibroService {
 
     AutorLibro alta(AutorLibro autorLibro);
 
-    List<AutorLibro> buscar();
+    List<AutorLibro> buscar(String isbn, String titulo, Long autorId);
 
     AutorLibro modificar(AutorLibro autorLibro);
 

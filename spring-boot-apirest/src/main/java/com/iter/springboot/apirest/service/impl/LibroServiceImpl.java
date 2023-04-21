@@ -87,10 +87,11 @@ public class LibroServiceImpl implements LibroService {
     }
 
     @Override
-    public List<AutorLibroDto> buscar() {
-        List<AutorLibro> lista = autorLibroService.buscar();
+    public List<AutorLibroDto> buscar(String isbn, String titulo, Long autorCode) {
+
+        List<AutorLibro> lista = autorLibroService.buscar(isbn,titulo,autorCode);
         log.info(lista.toString());
-        List<AutorLibroDto> autorLibroDto = autorLibroMapper.toListDto(autorLibroService.buscar());
+        List<AutorLibroDto> autorLibroDto = autorLibroMapper.toListDto(autorLibroService.buscar(isbn, titulo, autorCode));
 
         return autorLibroDto;
     }

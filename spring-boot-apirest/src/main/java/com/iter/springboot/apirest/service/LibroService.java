@@ -11,7 +11,7 @@ public interface LibroService {
 
     AutorLibroDto alta(LibroDto libroDto, MultipartFile imagen);
 
-    List<AutorLibroDto> buscar();
+    List<AutorLibroDto> buscar(String isbn, String titulo, Long autorCode);
 
     AutorLibroDto modificar(Long id, LibroDto libroDto, MultipartFile imagen);
 }
