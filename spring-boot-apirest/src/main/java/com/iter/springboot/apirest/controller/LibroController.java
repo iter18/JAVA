@@ -47,4 +47,11 @@ public class LibroController {
         return  ResponseEntity.status(HttpStatus.CREATED).body(autorLibroDto);
 
     }
+
+    @DeleteMapping("libros/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<HttpStatus> eliminar(@PathVariable Long id){
+        libroService.eliminar(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
 }

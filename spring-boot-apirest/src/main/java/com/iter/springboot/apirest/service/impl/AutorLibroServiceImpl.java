@@ -5,6 +5,7 @@ import com.iter.springboot.apirest.repository.AutorLibroRepository;
 import com.iter.springboot.apirest.repository.specification.AutorLibroSpecification;
 import com.iter.springboot.apirest.service.AutorLibroService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -44,5 +45,18 @@ public class AutorLibroServiceImpl implements AutorLibroService {
     @Override
     public Optional<AutorLibro> buscarPorId(Long id) {
         return autorLibroRepository.findById(id);
+    }
+
+    @Override
+    public void eliminar(AutorLibro autorLibro) {
+
+        try {
+            Long id = autorLibro.getId();
+            autorLibroRepository.delete(autorLibro);
+
+        }catch (DataAccessException ex){
+            ex.getMessage();
+            ex.printStackTrace();
+        }
     }
 }

@@ -62,6 +62,12 @@ public class LibroServiceImpl implements LibroService {
         Assert.hasText(libroDto.getCategoria(),"Campo ISBN es requerido");
         Assert.hasText(libroDto.getAutor(),"Campo Autor es requerido");
 
+        Specification<Libro> filtro = LibroSpecification.isbn(libroDto.getIsbn());
+        Optional<Libro> existeIsbn = libroRepository.findOne(filtro);
+
+        if(existeIsbn.isPresent()){
+            throw new IllegalArgumentException("Este Isbn se encuentra registrado");
+        }
 
         Autor autor = autorMapper.toEntity(autorService.buscar(Long.parseLong(libroDto.getAutor())));
 
@@ -145,6 +151,18 @@ public class LibroServiceImpl implements LibroService {
         autorLibro.setAutor(autor);
         autorLibro.setLibro(libro);
         return  autorLibroMapper.toDto(autorLibroService.modificar(autorLibro));
+
+    }
+
+    @Override
+    @Transactional
+    public void eliminar(Long id) {
+
+        AutorLibro autorLibro = autorLibroService.buscarPorId(id)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontro el registro a eliminar"));
+
+           autorLibroService.eliminar(autorLibro);
+           libroRepository.delete(autorLibro.getLibro());
 
     }
 }

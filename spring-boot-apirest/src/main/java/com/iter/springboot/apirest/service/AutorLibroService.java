@@ -15,4 +15,6 @@ public interface AutorLibroService {
 
     Optional<AutorLibro> buscarPorId(Long id);
 
+    void eliminar(AutorLibro autorLibro);
+
 }
