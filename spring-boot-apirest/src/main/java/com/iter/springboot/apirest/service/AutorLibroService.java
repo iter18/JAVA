@@ -11,6 +11,8 @@ public interface AutorLibroService {
 
     List<AutorLibro> buscar(String isbn, String titulo, Long autorId);
 
+    AutorLibro buscarByIdLibro(Long id);
+
     AutorLibro modificar(AutorLibro autorLibro);
 
     Optional<AutorLibro> buscarPorId(Long id);

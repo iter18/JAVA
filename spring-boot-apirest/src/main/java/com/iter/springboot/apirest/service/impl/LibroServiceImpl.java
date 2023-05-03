@@ -1,7 +1,9 @@
 package com.iter.springboot.apirest.service.impl;
 
 import com.iter.springboot.apirest.dtos.AutorLibroDto;
+import com.iter.springboot.apirest.dtos.ComboDto;
 import com.iter.springboot.apirest.dtos.LibroDto;
+import com.iter.springboot.apirest.genericos.negocio.impl.AbstractQueryAvanzadoService;
 import com.iter.springboot.apirest.mappers.AutorLibroMapper;
 import com.iter.springboot.apirest.mappers.AutorMapper;
 import com.iter.springboot.apirest.mappers.LibroMapper;
@@ -9,6 +11,7 @@ import com.iter.springboot.apirest.modelo.Autor;
 import com.iter.springboot.apirest.modelo.AutorLibro;
 import com.iter.springboot.apirest.modelo.Libro;
 import com.iter.springboot.apirest.repository.LibroRepository;
+import com.iter.springboot.apirest.repository.specification.AutorLibroSpecification;
 import com.iter.springboot.apirest.repository.specification.LibroSpecification;
 import com.iter.springboot.apirest.service.AutorLibroService;
 import com.iter.springboot.apirest.service.AutorService;
@@ -18,20 +21,24 @@ import io.jsonwebtoken.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
+import javax.persistence.Tuple;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 @Transactional(readOnly = true)
-public class LibroServiceImpl implements LibroService {
+public class LibroServiceImpl extends AbstractQueryAvanzadoService<Libro,Long> implements LibroService {
 
     @Autowired
     private LibroRepository libroRepository;
@@ -53,6 +60,16 @@ public class LibroServiceImpl implements LibroService {
 
     @Autowired
     private AutorLibroMapper autorLibroMapper;
+
+    @Override
+    public JpaSpecificationExecutor<Libro> getJpaSpecificationExecutor() {
+        return libroRepository;
+    }
+
+    @Override
+    public JpaRepository<Libro, Long> getJpaRepository() {
+        return libroRepository;
+    }
 
     @Override
     @Transactional
@@ -155,14 +172,34 @@ public class LibroServiceImpl implements LibroService {
     }
 
     @Override
+    public List<ComboDto> buscarC() {
+        List<Tuple> registros = libroRepository.buscarC();
+
+        return registros.stream()
+                .map(reg -> new ComboDto(Integer.parseInt(reg.get("code").toString()),reg.get("valor").toString()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public AutorLibroDto buscar(Long id) {
+        return autorLibroMapper.toDto(autorLibroService.buscarByIdLibro(id));
+    }
+
+    @Override
     @Transactional
     public void eliminar(Long id) {
 
         AutorLibro autorLibro = autorLibroService.buscarPorId(id)
                 .orElseThrow(() -> new EntityNotFoundException("No se encontro el registro a eliminar"));
 
+        boolean eliminoFoto = uploadFileService.delete(autorLibro.getLibro().getRutaFoto());
+        if (!eliminoFoto){
+            throw new IllegalArgumentException("La imagen del libro no fue eliminada");
+        }
            autorLibroService.eliminar(autorLibro);
            libroRepository.delete(autorLibro.getLibro());
 
     }
+
+
 }

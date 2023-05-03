@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,6 +35,13 @@ public class AutorLibroServiceImpl implements AutorLibroService {
                 .and(AutorLibroSpecification.autorId(autorId));
 
         return  autorLibroRepository.findAll(filtro,Sort.by("libro.titulo").ascending());
+    }
+
+    @Override
+    public AutorLibro buscarByIdLibro(Long id) {
+        Specification<AutorLibro> filtro = AutorLibroSpecification.libroId(id);
+        return autorLibroRepository.findOne(filtro)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontró ningun registro del libro"));
     }
 
     @Override

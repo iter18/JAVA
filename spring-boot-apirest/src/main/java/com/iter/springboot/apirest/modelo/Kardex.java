@@ -1,9 +1,17 @@
 package com.iter.springboot.apirest.modelo;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
-
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
+@Entity
+@Table(name = "kardex")
 public class Kardex implements Serializable {
 
     private static final long serialVersionUID = -6640610040606128045L;

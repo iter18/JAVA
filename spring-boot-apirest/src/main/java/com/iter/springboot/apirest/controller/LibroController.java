@@ -2,6 +2,7 @@ package com.iter.springboot.apirest.controller;
 
 
 import com.iter.springboot.apirest.dtos.AutorLibroDto;
+import com.iter.springboot.apirest.dtos.ComboDto;
 import com.iter.springboot.apirest.dtos.LibroDto;
 import com.iter.springboot.apirest.service.LibroService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,17 @@ public class LibroController {
                                                       @RequestParam("autorLibro") Optional<String> autorCode){
         Long autorId = autorCode.isEmpty() ? null : Long.parseLong(autorCode.get());
         return ResponseEntity.status(HttpStatus.OK).body(libroService.buscar(isbn.orElse(""), titulo.orElse(""),autorId ));
+    }
+    @GetMapping("/libros/combo")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<List<ComboDto>> buscarC(){
+        return ResponseEntity.status(HttpStatus.OK).body(libroService.buscarC());
+    }
+
+    @GetMapping("/libros/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<AutorLibroDto> buscarById(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(libroService.buscar(id));
     }
 
     @PostMapping("/libros")
