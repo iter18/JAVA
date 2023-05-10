@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -47,6 +48,8 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
     @Autowired
     KardexService kardexService;
 
+
+
     @Override
     public JpaSpecificationExecutor<Inventario> getJpaSpecificationExecutor() {
         return inventarioRepository;
@@ -55,6 +58,15 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
     @Override
     public JpaRepository<Inventario, Long> getJpaRepository() {
         return inventarioRepository;
+    }
+
+    @Override
+    public List<InventarioDto> buscar(String isbn, String titulo) {
+
+        Specification<Inventario> filtro = InventarioSpecification.tituloLibro(titulo)
+                .and(InventarioSpecification.isbnLibro(isbn));
+
+        return inventarioMapper.toListDto(this.buscar(filtro));
     }
 
     @Override
