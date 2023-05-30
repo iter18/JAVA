@@ -1,6 +1,6 @@
 package com.iter.springboot.apirest.controller;
 
-import com.iter.springboot.apirest.dtos.AltaProductoInventarioDto;
+import com.iter.springboot.apirest.dtos.ProductoInventarioDto;
 import com.iter.springboot.apirest.dtos.InventarioDto;
 import com.iter.springboot.apirest.service.InventarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +21,8 @@ public class InventarioController {
 
     @PostMapping("/altaProducto")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public ResponseEntity<InventarioDto> altaProducto(@RequestBody AltaProductoInventarioDto altaProductoInventarioDto){
-        InventarioDto inventarioDto = inventarioService.altaProducto(altaProductoInventarioDto);
+    public ResponseEntity<InventarioDto> altaProducto(@RequestBody ProductoInventarioDto productoInventarioDto){
+        InventarioDto inventarioDto = inventarioService.altaProducto(productoInventarioDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(inventarioDto);
     }
 
@@ -30,6 +30,13 @@ public class InventarioController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<List<InventarioDto>> buscarProducto(@RequestParam Optional<String> isbnLibro, @RequestParam Optional<String> tituloLibro){
         return ResponseEntity.status(HttpStatus.OK).body(inventarioService.buscar(isbnLibro.orElse(""), tituloLibro.orElse("")));
+    }
+
+    @PutMapping("/modificarProducto")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<InventarioDto> modificar(@RequestBody ProductoInventarioDto productoInventarioDto){
+        InventarioDto inventarioDto = inventarioService.modificarProducto(productoInventarioDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(inventarioDto);
     }
 
 }

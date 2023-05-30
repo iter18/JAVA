@@ -1,7 +1,7 @@
 package com.iter.springboot.apirest.service.impl;
 
-import com.iter.springboot.apirest.dtos.AltaProductoInventarioDto;
 import com.iter.springboot.apirest.dtos.InventarioDto;
+import com.iter.springboot.apirest.dtos.ProductoInventarioDto;
 import com.iter.springboot.apirest.genericos.negocio.impl.AbstractQueryAvanzadoService;
 import com.iter.springboot.apirest.mappers.InventarioMapper;
 import com.iter.springboot.apirest.modelo.Inventario;
@@ -24,7 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,17 +72,18 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
 
     @Override
     @Transactional
-    public InventarioDto altaProducto(AltaProductoInventarioDto altaProductoInventarioDto) {
+    public InventarioDto altaProducto(ProductoInventarioDto productoInventarioDto) {
 
-        Assert.notNull(altaProductoInventarioDto.getMinimo(),"El minimo es campo requerido");
-        Assert.notNull(altaProductoInventarioDto.getStock(),"El stock es campo requerido");
-        Assert.notNull(altaProductoInventarioDto.getPrecio(),"El precio es campo requerido");
+        Assert.notNull(productoInventarioDto.getMinimo(),"El minimo es campo requerido");
+        Assert.notNull(productoInventarioDto.getStock(),"El stock es campo requerido");
+        Assert.notNull(productoInventarioDto.getPrecio(),"El precio es campo requerido");
+
 
         //verificación de existencia de libro y obtenemos al mismo tiempo
-        Libro libro = libroService.buscarPorId(altaProductoInventarioDto.getIdLibro())
+        Libro libro = libroService.buscarPorId(productoInventarioDto.getLibro().getId())
                 .orElseThrow(() -> new EntityNotFoundException("El libro no existe en la DB"));
 
-        Movimiento movimiento = movimientoService.buscarPorId(altaProductoInventarioDto.getIdMovimiento())
+        Movimiento movimiento = movimientoService.buscarPorId(productoInventarioDto.getIdMovimiento())
                 .orElseThrow(() -> new EntityNotFoundException("El movimiento no se encuntra registrado"));
 
         //Validar que no exista registro de libro/producto registrado
@@ -95,16 +97,16 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
 
         Inventario inv = Inventario.builder()
                 .libro(libro)
-                .stock(altaProductoInventarioDto.getStock())
-                .minimo(altaProductoInventarioDto.getMinimo())
-                .precio(altaProductoInventarioDto.getPrecio())
+                .stock(productoInventarioDto.getStock())
+                .minimo(productoInventarioDto.getMinimo())
+                .precio(productoInventarioDto.getPrecio())
                 .build();
         Inventario inventario = inventarioRepository.save(inv);
 
         Kardex kardex = Kardex.builder()
                 .precio(inventario.getPrecio())
-                .cantidad(inventario.getStock())
-                .fechaMovimiento(new Date())
+                .cantidadInicial(inventario.getStock())
+                .fechaMovimiento(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
                 .libro(libro)
                 .movimiento(movimiento)
                 .build();
@@ -112,6 +114,17 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
         kardexService.alta(kardex);
 
         return inventarioMapper.toDto(inventario);
+    }
+
+    @Override
+    public InventarioDto modificarProducto(ProductoInventarioDto inventarioDto) {
+        Inventario inventario = this.buscarPorId(inventarioDto.getIdInventario())
+                        .orElseThrow(()-> new EntityNotFoundException("No se encontro el registro en el inventario"));
+        Movimiento movimiento = movimientoService.buscarPorId(inventarioDto.getIdMovimiento())
+                        .orElseThrow(() -> new EntityNotFoundException("El tipo de movimiento no existe!"));
+
+        log.info("obj: {}",inventarioDto.getLibro().getId());
+        return null;
     }
 
 

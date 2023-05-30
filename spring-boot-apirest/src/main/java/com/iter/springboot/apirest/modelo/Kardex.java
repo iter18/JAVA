@@ -4,7 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -21,10 +21,18 @@ public class Kardex implements Serializable {
     private Long id;
 
     private Double precio;
-    private Integer cantidad;
+
+    @Column(name = "CANTIDAD_INICIAL")
+    private Integer cantidadInicial;
+
+    private Integer entradas;
+    private Integer salidas;
+
+    @Column(name = "CANTIDAD_FINAL")
+    private Integer cantidadFinal;
 
     @Column(name = "FECHA_MOVIMIENTO")
-    private Date fechaMovimiento;
+    private LocalDateTime fechaMovimiento;
 
     @JoinColumn(name = "ID_LIBRO", referencedColumnName = "ID")
     @ManyToOne(fetch = FetchType.LAZY)

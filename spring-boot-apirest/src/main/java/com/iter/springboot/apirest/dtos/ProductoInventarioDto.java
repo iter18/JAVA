@@ -10,13 +10,14 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class AltaProductoInventarioDto implements Serializable {
+public class ProductoInventarioDto implements Serializable {
 
     private static final long serialVersionUID = -1836596040881285053L;
 
-    private Long idLibro;
+    private Long idInventario;
     private Long idMovimiento;
     private Integer stock;
     private Integer minimo;
     private Double precio;
+    private LibroDto libro;
 }
