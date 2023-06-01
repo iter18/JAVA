@@ -22,7 +22,8 @@ public class Inventario  implements Serializable {
 
     private Integer stock;
     private Integer minimo;
-    private Double precio;
+    private Double precioCompra;
+    private Double precioVenta;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_LIBRO", referencedColumnName = "ID")

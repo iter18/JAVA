@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class InventarioController {
 
     @GetMapping("/buscarProductos")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @Transactional
     public ResponseEntity<List<InventarioDto>> buscarProducto(@RequestParam Optional<String> isbnLibro, @RequestParam Optional<String> tituloLibro){
         return ResponseEntity.status(HttpStatus.OK).body(inventarioService.buscar(isbnLibro.orElse(""), tituloLibro.orElse("")));
     }

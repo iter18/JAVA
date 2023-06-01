@@ -4,16 +4,10 @@ import com.iter.springboot.apirest.dtos.InventarioDto;
 import com.iter.springboot.apirest.dtos.ProductoInventarioDto;
 import com.iter.springboot.apirest.genericos.negocio.impl.AbstractQueryAvanzadoService;
 import com.iter.springboot.apirest.mappers.InventarioMapper;
-import com.iter.springboot.apirest.modelo.Inventario;
-import com.iter.springboot.apirest.modelo.Kardex;
-import com.iter.springboot.apirest.modelo.Libro;
-import com.iter.springboot.apirest.modelo.Movimiento;
+import com.iter.springboot.apirest.modelo.*;
 import com.iter.springboot.apirest.repository.InventarioRepository;
 import com.iter.springboot.apirest.repository.specification.InventarioSpecification;
-import com.iter.springboot.apirest.service.InventarioService;
-import com.iter.springboot.apirest.service.KardexService;
-import com.iter.springboot.apirest.service.LibroService;
-import com.iter.springboot.apirest.service.MovimientoService;
+import com.iter.springboot.apirest.service.*;
 import io.jsonwebtoken.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +43,9 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
     @Autowired
     KardexService kardexService;
 
+    @Autowired
+    HistoricoLibroService historicoLibroService;
+
 
 
     @Override
@@ -76,7 +73,8 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
 
         Assert.notNull(productoInventarioDto.getMinimo(),"El minimo es campo requerido");
         Assert.notNull(productoInventarioDto.getStock(),"El stock es campo requerido");
-        Assert.notNull(productoInventarioDto.getPrecio(),"El precio es campo requerido");
+        Assert.notNull(productoInventarioDto.getPrecioCompra(),"El precio de compra es campo requerido");
+        Assert.notNull(productoInventarioDto.getPrecioVenta(),"El precio de venta es campo requerido");
 
 
         //verificación de existencia de libro y obtenemos al mismo tiempo
@@ -99,13 +97,25 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                 .libro(libro)
                 .stock(productoInventarioDto.getStock())
                 .minimo(productoInventarioDto.getMinimo())
-                .precio(productoInventarioDto.getPrecio())
+                .precioCompra(productoInventarioDto.getPrecioCompra())
+                .precioVenta(productoInventarioDto.getPrecioVenta())
                 .build();
         Inventario inventario = inventarioRepository.save(inv);
 
+        HistoricoLibro historicoLibro = HistoricoLibro.builder()
+                .cantidad(inventario.getStock())
+                .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                .libro(libro)
+                .movimiento(movimiento)
+                .build();
+        historicoLibroService.alta(historicoLibro);
+
         Kardex kardex = Kardex.builder()
-                .precio(inventario.getPrecio())
+                .precio(inventario.getPrecioVenta())
                 .cantidadInicial(inventario.getStock())
+                .entradas(0)
+                .salidas(0)
+                .cantidadFinal(inventario.getStock())
                 .fechaMovimiento(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
                 .libro(libro)
                 .movimiento(movimiento)
@@ -122,6 +132,14 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                         .orElseThrow(()-> new EntityNotFoundException("No se encontro el registro en el inventario"));
         Movimiento movimiento = movimientoService.buscarPorId(inventarioDto.getIdMovimiento())
                         .orElseThrow(() -> new EntityNotFoundException("El tipo de movimiento no existe!"));
+        Libro libro  = libroService.buscarPorId(inventarioDto.getLibro().getId())
+                .orElseThrow(()-> new EntityNotFoundException("No se encontro el libro seleccionado"));
+
+        //Validación para saber si hay más de un moivimiento en Kardex del producto
+        /*Specification
+        kardexService.buscar()*/
+
+
 
         log.info("obj: {}",inventarioDto.getLibro().getId());
         return null;

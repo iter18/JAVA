@@ -18,6 +18,7 @@ public class ProductoInventarioDto implements Serializable {
     private Long idMovimiento;
     private Integer stock;
     private Integer minimo;
-    private Double precio;
+    private Double precioCompra;
+    private Double precioVenta;
     private LibroDto libro;
 }

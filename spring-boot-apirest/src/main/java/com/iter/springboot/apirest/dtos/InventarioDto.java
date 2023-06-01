@@ -17,7 +17,8 @@ public class InventarioDto implements Serializable {
     private Long id;
     private Integer stock;
     private Integer minimo;
-    private Double precio;
+    private Double precioCompra;
+    private Double precioVenta;
     private LibroDto libro;
 
 
