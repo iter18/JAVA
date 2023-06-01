@@ -12,6 +12,7 @@ import com.iter.springboot.apirest.service.*;
 import io.jsonwebtoken.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.sql.SQLDataException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -77,108 +79,124 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
     @Override
     @Transactional
     public InventarioDto altaProducto(ProductoInventarioDto productoInventarioDto) {
-
         Assert.notNull(productoInventarioDto.getMinimo(),"El minimo es campo requerido");
         Assert.notNull(productoInventarioDto.getStock(),"El stock es campo requerido");
         Assert.notNull(productoInventarioDto.getPrecioCompra(),"El precio de compra es campo requerido");
         Assert.notNull(productoInventarioDto.getPrecioVenta(),"El precio de venta es campo requerido");
+        try {
 
+            //verificación de existencia de libro y obtenemos al mismo tiempo
+            Libro libro = libroService.buscarPorId(productoInventarioDto.getLibro().getId())
+                    .orElseThrow(() -> new EntityNotFoundException("El libro no existe en la DB"));
 
-        //verificación de existencia de libro y obtenemos al mismo tiempo
-        Libro libro = libroService.buscarPorId(productoInventarioDto.getLibro().getId())
-                .orElseThrow(() -> new EntityNotFoundException("El libro no existe en la DB"));
+            Movimiento movimiento = movimientoService.buscarPorId(productoInventarioDto.getIdMovimiento())
+                    .orElseThrow(() -> new EntityNotFoundException("El movimiento no se encuntra registrado"));
 
-        Movimiento movimiento = movimientoService.buscarPorId(productoInventarioDto.getIdMovimiento())
-                .orElseThrow(() -> new EntityNotFoundException("El movimiento no se encuntra registrado"));
+            //Validar que no exista registro de libro/producto registrado
+            Specification<Inventario> filtro = InventarioSpecification.idLibro(libro.getId());
 
-        //Validar que no exista registro de libro/producto registrado
-        Specification<Inventario> filtro = InventarioSpecification.idLibro(libro.getId());
+            Optional<Inventario> registroExiste = this.buscarUnico(filtro);
 
-        Optional<Inventario> registroExiste = this.buscarUnico(filtro);
+            if(registroExiste.isPresent()){
+                throw  new IllegalArgumentException("Ya se encuentra dado de alta este producto");
+            }
 
-        if(registroExiste.isPresent()){
-            throw  new IllegalArgumentException("Ya se encuentra dado de alta este producto");
+            Inventario inv = Inventario.builder()
+                    .libro(libro)
+                    .stock(productoInventarioDto.getStock())
+                    .minimo(productoInventarioDto.getMinimo())
+                    .precioCompra(productoInventarioDto.getPrecioCompra())
+                    .precioVenta(productoInventarioDto.getPrecioVenta())
+                    .build();
+            Inventario inventario = inventarioRepository.save(inv);
+
+            HistoricoLibro historicoLibro = HistoricoLibro.builder()
+                    .cantidad(inventario.getStock())
+                    .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                    .minimo(inventario.getMinimo())
+                    .precioCompra(inventario.getPrecioCompra())
+                    .precioVenta(inventario.getPrecioVenta())
+                    .libro(libro)
+                    .movimiento(movimiento)
+                    .build();
+            historicoLibroService.alta(historicoLibro);
+
+            Kardex kardex = Kardex.builder()
+                    .precio(inventario.getPrecioVenta())
+                    .cantidadInicial(inventario.getStock())
+                    .entradas(0)
+                    .salidas(0)
+                    .cantidadFinal(inventario.getStock())
+                    .fechaMovimiento(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                    .libro(libro)
+                    .movimiento(movimiento)
+                    .build();
+
+            kardexService.alta(kardex);
+
+            return inventarioMapper.toDto(inventario);
+        }catch (DataAccessException e){
+            log.error("error: {}", e.getStackTrace());
+            throw  e;
         }
 
-        Inventario inv = Inventario.builder()
-                .libro(libro)
-                .stock(productoInventarioDto.getStock())
-                .minimo(productoInventarioDto.getMinimo())
-                .precioCompra(productoInventarioDto.getPrecioCompra())
-                .precioVenta(productoInventarioDto.getPrecioVenta())
-                .build();
-        Inventario inventario = inventarioRepository.save(inv);
-
-        HistoricoLibro historicoLibro = HistoricoLibro.builder()
-                .cantidad(inventario.getStock())
-                .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
-                .libro(libro)
-                .movimiento(movimiento)
-                .build();
-        historicoLibroService.alta(historicoLibro);
-
-        Kardex kardex = Kardex.builder()
-                .precio(inventario.getPrecioVenta())
-                .cantidadInicial(inventario.getStock())
-                .entradas(0)
-                .salidas(0)
-                .cantidadFinal(inventario.getStock())
-                .fechaMovimiento(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
-                .libro(libro)
-                .movimiento(movimiento)
-                .build();
-
-        kardexService.alta(kardex);
-
-        return inventarioMapper.toDto(inventario);
     }
 
     @Override
     @Transactional
     public InventarioDto modificarProducto(ProductoInventarioDto inventarioDto) {
-        Inventario inventario = this.buscarPorId(inventarioDto.getIdInventario())
+        try {
+                Inventario inventario = this.buscarPorId(inventarioDto.getIdInventario())
                         .orElseThrow(()-> new EntityNotFoundException("No se encontro el registro en el inventario"));
-        Movimiento movimiento = movimientoService.buscarPorId(inventarioDto.getIdMovimiento())
+                Movimiento movimiento = movimientoService.buscarPorId(inventarioDto.getIdMovimiento())
                         .orElseThrow(() -> new EntityNotFoundException("El tipo de movimiento no existe!"));
-        Libro libro  = libroService.buscarPorId(inventarioDto.getLibro().getId())
-                .orElseThrow(()-> new EntityNotFoundException("No se encontro el libro seleccionado"));
+                Libro libro  = libroService.buscarPorId(inventarioDto.getLibro().getId())
+                        .orElseThrow(()-> new EntityNotFoundException("No se encontro el libro seleccionado"));
 
-        //Validación para saber si hay más de un moivimiento en Kardex del producto
-        Specification<Kardex> filtro = KardexSpecification.idLibro(libro.getId());
+                //Validación para saber si hay más de un moivimiento en Kardex del producto
+                Specification<Kardex> filtro = KardexSpecification.idLibro(libro.getId());
 
-        List<Kardex> registrosProductoKardex = kardexService.buscar(filtro,Sort.by(Kardex_.fechaMovimiento.getName()).descending());
+                List<Kardex> registrosProductoKardex = kardexService.buscar(filtro,Sort.by(Kardex_.fechaMovimiento.getName()).descending());
 
-        if(registrosProductoKardex.size()>1){
-            if(!inventarioDto.getStock().equals(registrosProductoKardex.get(0).getCantidadFinal())){
-                throw new IllegalArgumentException("Operación no permitida: el producto ya tiene movimientos, ingrese una devolución");
-            }
-            inventario.setMinimo(inventarioDto.getMinimo());
-            inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
-            inventario.setPrecioCompra(inventarioDto.getPrecioCompra());
-        }else{
-            inventario.setStock(inventarioDto.getStock());
-            inventario.setMinimo(inventarioDto.getMinimo());
-            inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
-            inventario.setPrecioCompra(inventarioDto.getPrecioCompra());
-            registrosProductoKardex.get(0).setCantidadInicial(inventarioDto.getStock());
-            registrosProductoKardex.get(0).setCantidadFinal(inventarioDto.getStock());
-            registrosProductoKardex.get(0).setPrecio(inventarioDto.getPrecioVenta());
-            HistoricoLibro historicoLibro = HistoricoLibro.builder()
-                    .cantidad(inventarioDto.getStock())
-                    .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
-                    .libro(libro)
-                    .movimiento(movimiento)
-                    .build();
-            historicoLibroService.alta(historicoLibro);
+                if(registrosProductoKardex.size()>1){
+                    if(!inventarioDto.getStock().equals(registrosProductoKardex.get(0).getCantidadFinal())){
+                        throw new IllegalArgumentException("Operación no permitida: el producto ya tiene movimientos, ingrese una devolución");
+                    }
+                    inventario.setMinimo(inventarioDto.getMinimo());
+                    inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
+                    inventario.setPrecioCompra(inventarioDto.getPrecioCompra());
+                }else{
+                    inventario.setStock(inventarioDto.getStock());
+                    inventario.setMinimo(inventarioDto.getMinimo());
+                    inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
+                    inventario.setPrecioCompra(inventarioDto.getPrecioCompra());
+                    registrosProductoKardex.get(0).setCantidadInicial(inventarioDto.getStock());
+                    registrosProductoKardex.get(0).setCantidadFinal(inventarioDto.getStock());
+                    registrosProductoKardex.get(0).setPrecio(inventarioDto.getPrecioVenta());
+                }
+                Inventario inventarioM = inventarioRepository.save(inventario);
+                HistoricoLibro historicoLibro = HistoricoLibro.builder()
+                        .cantidad(inventarioDto.getStock())
+                        .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                        .minimo(inventario.getMinimo())
+                        .precioVenta(inventario.getPrecioVenta())
+                        .precioCompra(inventarioDto.getPrecioCompra())
+                        .libro(libro)
+                        .movimiento(movimiento)
+                        .build();
+
+
+                historicoLibroService.alta(historicoLibro);
+                kardexService.modificar(registrosProductoKardex.get(0));
+
+                log.info("obj: {}",inventario,registrosProductoKardex.toArray());
+                return inventarioMapper.toDto(inventarioM);
+
+        }catch (DataAccessException e){
+            log.error("error{}",e.getStackTrace());
+            throw e;
         }
 
-        InventarioDto inventarioDtoR = inventarioMapper.toDto(inventarioRepository.save(inventario));
-        kardexService.modificar(registrosProductoKardex.get(0));
-
-
-
-        log.info("obj: {}",inventario,registrosProductoKardex.toArray());
-        return inventarioDtoR;
     }
 
 
