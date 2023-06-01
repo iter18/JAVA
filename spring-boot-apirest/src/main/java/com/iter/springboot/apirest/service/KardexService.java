@@ -6,4 +6,6 @@ import com.iter.springboot.apirest.modelo.Kardex;
 public interface KardexService extends QueryAvanzadoService<Kardex,Long> {
 
     Kardex alta(Kardex kardex);
+
+    Kardex modificar(Kardex kardex);
 }

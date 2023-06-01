@@ -41,4 +41,10 @@ public class KardexServiceImpl extends AbstractQueryAvanzadoService<Kardex,Long>
     public Kardex alta(Kardex kardex) {
         return kardexRepository.save(kardex);
     }
+
+    @Override
+    @Transactional
+    public Kardex modificar( Kardex kardex) {
+        return  kardexRepository.saveAndFlush(kardex);
+    }
 }

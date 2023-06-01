@@ -134,6 +134,7 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
     }
 
     @Override
+    @Transactional
     public InventarioDto modificarProducto(ProductoInventarioDto inventarioDto) {
         Inventario inventario = this.buscarPorId(inventarioDto.getIdInventario())
                         .orElseThrow(()-> new EntityNotFoundException("No se encontro el registro en el inventario"));
@@ -145,12 +146,39 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
         //Validación para saber si hay más de un moivimiento en Kardex del producto
         Specification<Kardex> filtro = KardexSpecification.idLibro(libro.getId());
 
-       //List<Kardex> registrosProducto = kardexService.buscar(filtro,);
+        List<Kardex> registrosProductoKardex = kardexService.buscar(filtro,Sort.by(Kardex_.fechaMovimiento.getName()).descending());
+
+        if(registrosProductoKardex.size()>1){
+            if(!inventarioDto.getStock().equals(registrosProductoKardex.get(0).getCantidadFinal())){
+                throw new IllegalArgumentException("Operación no permitida: el producto ya tiene movimientos, ingrese una devolución");
+            }
+            inventario.setMinimo(inventarioDto.getMinimo());
+            inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
+            inventario.setPrecioCompra(inventarioDto.getPrecioCompra());
+        }else{
+            inventario.setStock(inventarioDto.getStock());
+            inventario.setMinimo(inventarioDto.getMinimo());
+            inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
+            inventario.setPrecioCompra(inventarioDto.getPrecioCompra());
+            registrosProductoKardex.get(0).setCantidadInicial(inventarioDto.getStock());
+            registrosProductoKardex.get(0).setCantidadFinal(inventarioDto.getStock());
+            registrosProductoKardex.get(0).setPrecio(inventarioDto.getPrecioVenta());
+            HistoricoLibro historicoLibro = HistoricoLibro.builder()
+                    .cantidad(inventarioDto.getStock())
+                    .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                    .libro(libro)
+                    .movimiento(movimiento)
+                    .build();
+            historicoLibroService.alta(historicoLibro);
+        }
+
+        InventarioDto inventarioDtoR = inventarioMapper.toDto(inventarioRepository.save(inventario));
+        kardexService.modificar(registrosProductoKardex.get(0));
 
 
 
-        log.info("obj: {}",inventarioDto.getLibro().getId());
-        return null;
+        log.info("obj: {}",inventario,registrosProductoKardex.toArray());
+        return inventarioDtoR;
     }
 
 
