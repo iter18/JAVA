@@ -10,6 +10,7 @@ import com.iter.springboot.apirest.mappers.LibroMapper;
 import com.iter.springboot.apirest.modelo.Autor;
 import com.iter.springboot.apirest.modelo.AutorLibro;
 import com.iter.springboot.apirest.modelo.Libro;
+import com.iter.springboot.apirest.modelo.Libro_;
 import com.iter.springboot.apirest.repository.LibroRepository;
 import com.iter.springboot.apirest.repository.specification.AutorLibroSpecification;
 import com.iter.springboot.apirest.repository.specification.LibroSpecification;
@@ -20,6 +21,7 @@ import com.iter.springboot.apirest.service.UploadFileService;
 import io.jsonwebtoken.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -69,6 +71,11 @@ public class LibroServiceImpl extends AbstractQueryAvanzadoService<Libro,Long> i
     @Override
     public JpaRepository<Libro, Long> getJpaRepository() {
         return libroRepository;
+    }
+
+    @Override
+    public Sort getOrdenamiento() {
+        return Sort.by(Libro_.titulo.getName()).ascending();
     }
 
     @Override

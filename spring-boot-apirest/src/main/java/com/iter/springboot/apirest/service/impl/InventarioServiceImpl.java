@@ -7,10 +7,12 @@ import com.iter.springboot.apirest.mappers.InventarioMapper;
 import com.iter.springboot.apirest.modelo.*;
 import com.iter.springboot.apirest.repository.InventarioRepository;
 import com.iter.springboot.apirest.repository.specification.InventarioSpecification;
+import com.iter.springboot.apirest.repository.specification.KardexSpecification;
 import com.iter.springboot.apirest.service.*;
 import io.jsonwebtoken.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -56,6 +58,11 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
     @Override
     public JpaRepository<Inventario, Long> getJpaRepository() {
         return inventarioRepository;
+    }
+
+    @Override
+    public Sort getOrdenamiento() {
+        return Sort.by(Inventario_.id.getName()).ascending();
     }
 
     @Override
@@ -136,8 +143,9 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                 .orElseThrow(()-> new EntityNotFoundException("No se encontro el libro seleccionado"));
 
         //Validación para saber si hay más de un moivimiento en Kardex del producto
-        /*Specification
-        kardexService.buscar()*/
+        Specification<Kardex> filtro = KardexSpecification.idLibro(libro.getId());
+
+       //List<Kardex> registrosProducto = kardexService.buscar(filtro,);
 
 
 

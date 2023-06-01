@@ -2,10 +2,12 @@ package com.iter.springboot.apirest.service.impl;
 
 import com.iter.springboot.apirest.genericos.negocio.impl.AbstractQueryAvanzadoService;
 import com.iter.springboot.apirest.modelo.Movimiento;
+import com.iter.springboot.apirest.modelo.Movimiento_;
 import com.iter.springboot.apirest.repository.MovimientoRepository;
 import com.iter.springboot.apirest.service.MovimientoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Service;
@@ -25,5 +27,10 @@ public class MovimientoServiceImpl extends AbstractQueryAvanzadoService<Movimien
     @Override
     public JpaRepository<Movimiento, Long> getJpaRepository() {
         return movimientoRepository;
+    }
+
+    @Override
+    public Sort getOrdenamiento() {
+        return Sort.by(Movimiento_.id.getName()).ascending();
     }
 }
