@@ -145,6 +145,10 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
     @Override
     @Transactional
     public InventarioDto modificarProducto(ProductoInventarioDto inventarioDto) {
+        Assert.notNull(inventarioDto.getMinimo(),"El minimo es campo requerido");
+        Assert.notNull(inventarioDto.getStock(),"El stock es campo requerido");
+        Assert.notNull(inventarioDto.getPrecioCompra(),"El precio de compra es campo requerido");
+        Assert.notNull(inventarioDto.getPrecioVenta(),"El precio de venta es campo requerido");
         try {
                 Inventario inventario = this.buscarPorId(inventarioDto.getIdInventario())
                         .orElseThrow(()-> new EntityNotFoundException("No se encontro el registro en el inventario"));
@@ -153,11 +157,11 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                 Libro libro  = libroService.buscarPorId(inventarioDto.getLibro().getId())
                         .orElseThrow(()-> new EntityNotFoundException("No se encontro el libro seleccionado"));
 
-                //Validación para saber si hay más de un moivimiento en Kardex del producto
                 Specification<Kardex> filtro = KardexSpecification.idLibro(libro.getId());
 
                 List<Kardex> registrosProductoKardex = kardexService.buscar(filtro,Sort.by(Kardex_.fechaMovimiento.getName()).descending());
 
+                //Validación para saber si hay más de un moivimiento en Kardex del producto
                 if(registrosProductoKardex.size()>1){
                     if(!inventarioDto.getStock().equals(registrosProductoKardex.get(0).getCantidadFinal())){
                         throw new IllegalArgumentException("Operación no permitida: el producto ya tiene movimientos, ingrese una devolución");
@@ -197,6 +201,66 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
             throw e;
         }
 
+    }
+
+    @Override
+    @Transactional
+    public InventarioDto reordenProducto(String userName, ProductoInventarioDto productoInventarioDto) {
+        Assert.notNull(productoInventarioDto.getPrecioCompra(),"El precio de compra es campo requerido");
+        Assert.notNull(productoInventarioDto.getCantidadReorden(),"El campo cantidad reorden es requerido");
+        try{
+            Inventario inventario = this.buscarPorId(productoInventarioDto.getIdInventario())
+                    .orElseThrow(()-> new EntityNotFoundException("No se encontro el registro en el inventario"));
+            Movimiento movimiento = movimientoService.buscarPorId(productoInventarioDto.getIdMovimiento())
+                    .orElseThrow(() -> new EntityNotFoundException("El tipo de movimiento no existe!"));
+            Libro libro  = libroService.buscarPorId(productoInventarioDto.getLibro().getId())
+                    .orElseThrow(()-> new EntityNotFoundException("No se encontro el libro seleccionado"));
+
+            Specification<Kardex> filtro = KardexSpecification.idLibro(libro.getId());
+            List<Kardex> registrosProductoKardex = kardexService.buscar(filtro,Sort.by(Kardex_.fechaMovimiento.getName()).descending());
+
+            int cantidadInicial  = registrosProductoKardex.get(0).getCantidadInicial();
+            int entradas = registrosProductoKardex.get(0).getEntradas();
+            int salidas = registrosProductoKardex.get(0).getSalidas();
+
+
+            int cantidadFinal = (cantidadInicial+(entradas+ productoInventarioDto.getCantidadReorden()))-salidas;
+            int stockInventario = inventario.getStock();
+            int stockFinalInventario =  stockInventario + productoInventarioDto.getCantidadReorden();
+
+            inventario.setStock(stockFinalInventario);
+            inventario.setPrecioCompra(productoInventarioDto.getPrecioCompra());
+
+            Kardex kardex = Kardex.builder()
+                    .precio(inventario.getPrecioVenta())
+                    .cantidadInicial(registrosProductoKardex.get(0).getCantidadFinal())
+                    .entradas(productoInventarioDto.getCantidadReorden())
+                    .salidas(0)
+                    .cantidadFinal(cantidadFinal)
+                    .fechaMovimiento(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                    .libro(libro)
+                    .movimiento(movimiento)
+                    .build();
+
+            HistoricoLibro historicoLibro = HistoricoLibro.builder()
+                    .cantidad(productoInventarioDto.getCantidadReorden())
+                    .minimo(inventario.getMinimo())
+                    .precioCompra(inventario.getPrecioCompra())
+                    .precioVenta(inventario.getPrecioVenta())
+                    .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                    .libro(libro)
+                    .movimiento(movimiento)
+                    .build();
+
+
+            Inventario inventarioM = inventarioRepository.saveAndFlush(inventario);
+            kardexService.alta(kardex);
+            historicoLibroService.alta(historicoLibro);
+            log.info("Usuario:"+userName +" realizó: "+ inventario,kardex,historicoLibro );
+            return inventarioMapper.toDto(inventarioM);
+        }catch (DataAccessException e){
+            throw e;
+        }
     }
 
 

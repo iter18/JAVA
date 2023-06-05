@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,6 +40,14 @@ public class InventarioController {
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<InventarioDto> modificar(@RequestBody ProductoInventarioDto productoInventarioDto){
         InventarioDto inventarioDto = inventarioService.modificarProducto(productoInventarioDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(inventarioDto);
+    }
+
+
+    @PutMapping("/reordenProducto")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<InventarioDto> reorden(Authentication authentication, @RequestBody ProductoInventarioDto productoInventarioDto){
+        InventarioDto inventarioDto = inventarioService.reordenProducto(authentication.getName(),productoInventarioDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(inventarioDto);
     }
 

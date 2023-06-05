@@ -15,5 +15,7 @@ public interface InventarioService extends QueryAvanzadoService<Inventario,Long>
 
     InventarioDto modificarProducto(ProductoInventarioDto productoInventarioDto);
 
+    InventarioDto reordenProducto(String userName, ProductoInventarioDto productoInventarioDto);
+
 
 }

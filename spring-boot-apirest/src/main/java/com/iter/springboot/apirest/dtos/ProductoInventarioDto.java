@@ -21,4 +21,5 @@ public class ProductoInventarioDto implements Serializable {
     private Double precioCompra;
     private Double precioVenta;
     private LibroDto libro;
+    private Integer cantidadReorden;
 }
