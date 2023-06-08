@@ -3,6 +3,7 @@ package com.iter.springboot.apirest.controller;
 
 import com.iter.springboot.apirest.dtos.AutorLibroDto;
 import com.iter.springboot.apirest.dtos.ComboDto;
+import com.iter.springboot.apirest.dtos.HistoricoProductoDto;
 import com.iter.springboot.apirest.dtos.LibroDto;
 import com.iter.springboot.apirest.service.LibroService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,12 @@ public class LibroController {
         return ResponseEntity.status(HttpStatus.OK).body(libroService.buscar(id));
     }
 
+    @GetMapping("/libros/historico/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<List<HistoricoProductoDto>> buscar(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(libroService.consulta(id));
+    }
+
     @PostMapping("/libros")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<AutorLibroDto> alta(@ModelAttribute LibroDto libro,
@@ -66,4 +73,5 @@ public class LibroController {
         libroService.eliminar(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
 }

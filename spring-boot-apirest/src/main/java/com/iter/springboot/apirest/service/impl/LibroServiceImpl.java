@@ -2,22 +2,18 @@ package com.iter.springboot.apirest.service.impl;
 
 import com.iter.springboot.apirest.dtos.AutorLibroDto;
 import com.iter.springboot.apirest.dtos.ComboDto;
+import com.iter.springboot.apirest.dtos.HistoricoProductoDto;
 import com.iter.springboot.apirest.dtos.LibroDto;
 import com.iter.springboot.apirest.genericos.negocio.impl.AbstractQueryAvanzadoService;
 import com.iter.springboot.apirest.mappers.AutorLibroMapper;
 import com.iter.springboot.apirest.mappers.AutorMapper;
+import com.iter.springboot.apirest.mappers.HistoricoProductoMapper;
 import com.iter.springboot.apirest.mappers.LibroMapper;
-import com.iter.springboot.apirest.modelo.Autor;
-import com.iter.springboot.apirest.modelo.AutorLibro;
-import com.iter.springboot.apirest.modelo.Libro;
-import com.iter.springboot.apirest.modelo.Libro_;
+import com.iter.springboot.apirest.modelo.*;
 import com.iter.springboot.apirest.repository.LibroRepository;
 import com.iter.springboot.apirest.repository.specification.AutorLibroSpecification;
 import com.iter.springboot.apirest.repository.specification.LibroSpecification;
-import com.iter.springboot.apirest.service.AutorLibroService;
-import com.iter.springboot.apirest.service.AutorService;
-import com.iter.springboot.apirest.service.LibroService;
-import com.iter.springboot.apirest.service.UploadFileService;
+import com.iter.springboot.apirest.service.*;
 import io.jsonwebtoken.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +58,12 @@ public class LibroServiceImpl extends AbstractQueryAvanzadoService<Libro,Long> i
 
     @Autowired
     private AutorLibroMapper autorLibroMapper;
+
+    @Autowired
+    private HistoricoProductoMapper historicoProductoMapper;
+
+    @Autowired
+    private HistoricoLibroService historicoLibroService;
 
     @Override
     public JpaSpecificationExecutor<Libro> getJpaSpecificationExecutor() {
@@ -206,6 +208,14 @@ public class LibroServiceImpl extends AbstractQueryAvanzadoService<Libro,Long> i
            autorLibroService.eliminar(autorLibro);
            libroRepository.delete(autorLibro.getLibro());
 
+    }
+
+    @Override
+    public List<HistoricoProductoDto> consulta(Long id) {
+
+        List<HistoricoLibro> historicoLibroList = historicoLibroService.buscar(id);
+
+        return historicoProductoMapper.toListDto(historicoLibroList);
     }
 
 
