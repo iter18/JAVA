@@ -1,9 +1,6 @@
 package com.iter.springboot.apirest.service.impl;
 
-import com.iter.springboot.apirest.dtos.AutorLibroDto;
-import com.iter.springboot.apirest.dtos.ComboDto;
-import com.iter.springboot.apirest.dtos.HistoricoProductoDto;
-import com.iter.springboot.apirest.dtos.LibroDto;
+import com.iter.springboot.apirest.dtos.*;
 import com.iter.springboot.apirest.genericos.negocio.impl.AbstractQueryAvanzadoService;
 import com.iter.springboot.apirest.mappers.AutorLibroMapper;
 import com.iter.springboot.apirest.mappers.AutorMapper;
@@ -14,25 +11,43 @@ import com.iter.springboot.apirest.repository.LibroRepository;
 import com.iter.springboot.apirest.repository.specification.AutorLibroSpecification;
 import com.iter.springboot.apirest.repository.specification.LibroSpecification;
 import com.iter.springboot.apirest.service.*;
+import com.sun.istack.NotNull;
 import io.jsonwebtoken.lang.Assert;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.util.JRLoader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.Tuple;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
-
+import org.apache.commons.io.IOUtils;
+import org.springframework.core.io.ByteArrayResource;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
@@ -218,5 +233,77 @@ public class LibroServiceImpl extends AbstractQueryAvanzadoService<Libro,Long> i
         return historicoProductoMapper.toListDto(historicoLibroList);
     }
 
+    public Map<String, Object> getReportParams(Long libroId) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        List<DtoReporte> historicoLibroList = consulta(libroId).stream()
+                .map(historicoProductoDto -> {
+                    DtoReporte dtoReporte = new DtoReporte();
+                    dtoReporte.setCantidad(historicoProductoDto.getCantidad());
+                    dtoReporte.setMinimo(historicoProductoDto.getMinimo());
+                    dtoReporte.setPrecioCompra(historicoProductoDto.getPrecioCompra());
+                    dtoReporte.setPrecioVenta(historicoProductoDto.getPrecioVenta());
+                    dtoReporte.setMovimiento( historicoProductoDto.getMovimiento());
+
+                    return dtoReporte;
+                })
+                .collect(Collectors.toList());
+
+        DtoReporte[] DtoReporte = historicoLibroList.toArray(new DtoReporte[0]);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("ds", new JRBeanArrayDataSource(DtoReporte));
+        params.put("libroId", libroId);
+
+        return params;
+    }
+
+    @Override
+    @NotNull
+    public ResponseEntity<Resource> exportInvoice(Long id) {
+        final HashMap<String, Object> parameters = new HashMap<>();
+        List<DtoReporte> historicoLibroList = consulta(id).stream()
+                .map(historicoProductoDto -> {
+                    DtoReporte dtoReporte = new DtoReporte();
+                    dtoReporte.setCantidad(historicoProductoDto.getCantidad());
+                    dtoReporte.setMinimo(historicoProductoDto.getMinimo());
+                    dtoReporte.setLibroDto(historicoProductoDto.getLibro());
+                    dtoReporte.setPrecioCompra(historicoProductoDto.getPrecioCompra());
+                    dtoReporte.setPrecioVenta(historicoProductoDto.getPrecioVenta());
+                    dtoReporte.setMovimiento( historicoProductoDto.getMovimiento());
+                    return dtoReporte;
+                })
+                .collect(Collectors.toList());
+        try {
+
+            final File file = ResourceUtils.getFile("classpath:reportes/Historico_Producto.jasper");
+             File imgLogo = ResourceUtils.getFile("C:/Spring5/frontend/angular/angular/clientes-app/src/assets/uplodas/80bd547e-4665-498d-99c7-975b93cd67d2_bajoEstrella.jpg");
+            final JasperReport report = (JasperReport) JRLoader.loadObject(file);
+            parameters.put("ds", new JRBeanCollectionDataSource(historicoLibroList));
+            parameters.put("productoNombre",historicoLibroList.get(0).getLibroDto().getTitulo());
+
+            parameters.put("imgProducto", new FileInputStream(imgLogo));
+
+            JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+            byte[] reporte = JasperExportManager.exportReportToPdf(jasperPrint);
+
+            String sdf = (new SimpleDateFormat("dd/MM/yyyy")).format(new Date());
+            StringBuilder stringBuilder = new StringBuilder().append("InvoicePDF:");
+            ContentDisposition contentDisposition = ContentDisposition.builder("attachment")
+                    .filename(stringBuilder.append(id)
+                            .append("generateDate:")
+                            .append(sdf)
+                            .append(".pdf")
+                            .toString())
+                    .build();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentDisposition(contentDisposition);
+            return ResponseEntity.ok().contentLength((long) reporte.length)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .headers(headers).body(new ByteArrayResource(reporte));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 }

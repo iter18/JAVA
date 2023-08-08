@@ -6,9 +6,12 @@ import com.iter.springboot.apirest.dtos.HistoricoProductoDto;
 import com.iter.springboot.apirest.dtos.LibroDto;
 import com.iter.springboot.apirest.genericos.negocio.QueryAvanzadoService;
 import com.iter.springboot.apirest.modelo.Libro;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 public interface LibroService extends QueryAvanzadoService<Libro,Long> {
 
@@ -21,4 +24,7 @@ public interface LibroService extends QueryAvanzadoService<Libro,Long> {
 
     List<HistoricoProductoDto> consulta(Long id);
 
+    Map<String,Object> getReportParams(Long id);
+
+    ResponseEntity<Resource> exportInvoice(Long id);
 }
