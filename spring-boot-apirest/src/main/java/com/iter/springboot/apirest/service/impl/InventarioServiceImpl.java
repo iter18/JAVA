@@ -107,6 +107,7 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                     .minimo(productoInventarioDto.getMinimo())
                     .precioCompra(productoInventarioDto.getPrecioCompra())
                     .precioVenta(productoInventarioDto.getPrecioVenta())
+                    .baja(0)
                     .build();
             Inventario inventario = inventarioRepository.save(inv);
 
