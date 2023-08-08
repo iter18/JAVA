@@ -8,7 +8,6 @@ import com.iter.springboot.apirest.mappers.HistoricoProductoMapper;
 import com.iter.springboot.apirest.mappers.LibroMapper;
 import com.iter.springboot.apirest.modelo.*;
 import com.iter.springboot.apirest.repository.LibroRepository;
-import com.iter.springboot.apirest.repository.specification.AutorLibroSpecification;
 import com.iter.springboot.apirest.repository.specification.LibroSpecification;
 import com.iter.springboot.apirest.service.*;
 import com.sun.istack.NotNull;
@@ -38,16 +37,10 @@ import javax.persistence.EntityNotFoundException;
 import javax.persistence.Tuple;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.apache.commons.io.IOUtils;
-import org.springframework.core.io.ByteArrayResource;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
