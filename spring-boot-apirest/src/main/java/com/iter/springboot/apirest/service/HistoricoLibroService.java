@@ -11,5 +11,7 @@ public interface HistoricoLibroService extends QueryAvanzadoService<HistoricoLib
 
     List<HistoricoLibro> buscar(Long idLibro);
 
+    void modificar(List<HistoricoLibro> historicoLibro);
+
 
 }
