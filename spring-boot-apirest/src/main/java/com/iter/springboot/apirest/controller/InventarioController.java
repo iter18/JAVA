@@ -50,4 +50,11 @@ public class InventarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(inventarioDto);
     }
 
+    @PutMapping("/bajaProducto/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<HttpStatus> bajaProducto(@PathVariable Long id){
+        inventarioService.bajaProducto(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
 }
