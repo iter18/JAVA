@@ -22,7 +22,7 @@ public class ExceptionHelper {
 
     @ExceptionHandler(value = {DataAccessException.class})
     public ResponseEntity<Object> handlerDataAccessException(DataAccessException ex){
-        log.error("error{}",ex.getMessage());
+        log.error("error{}",ex.getStackTrace());
         return new ResponseEntity<>(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
