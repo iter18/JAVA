@@ -6,6 +6,7 @@ import com.iter.springboot.apirest.genericos.negocio.impl.AbstractQueryAvanzadoS
 import com.iter.springboot.apirest.mappers.InventarioMapper;
 import com.iter.springboot.apirest.modelo.*;
 import com.iter.springboot.apirest.repository.InventarioRepository;
+import com.iter.springboot.apirest.repository.specification.HistoricoLibroSpecification;
 import com.iter.springboot.apirest.repository.specification.InventarioSpecification;
 import com.iter.springboot.apirest.repository.specification.KardexSpecification;
 import com.iter.springboot.apirest.service.*;
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -119,6 +121,7 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                     .precioVenta(inventario.getPrecioVenta())
                     .libro(libro)
                     .movimiento(movimiento)
+                    .baja(0)
                     .build();
             historicoLibroService.alta(historicoLibro);
 
@@ -262,6 +265,67 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
         }catch (DataAccessException e){
             throw e;
         }
+    }
+
+    @Override
+    @Transactional
+    public void bajaProducto(Long idInventario) {
+
+        Inventario inventario = this.buscarPorId(idInventario)
+                .orElseThrow(() -> new EntityNotFoundException("No se encontro el registro en inventario"));
+
+        Movimiento movimiento = movimientoService.buscarPorId(Long.parseLong("6"))
+                .orElseThrow(() -> new EntityNotFoundException("El movimiento no fue encontrado"));
+
+
+        Specification<HistoricoLibro> filtro = HistoricoLibroSpecification.idLibro(inventario.getLibro().getId());
+
+        List<HistoricoLibro> historicoLibroList = historicoLibroService.buscar(filtro)
+                .stream()
+                .map(historicoLibro -> {
+                    historicoLibro.setBaja(1);
+                    return historicoLibro;
+                })
+                .collect(Collectors.toList());
+
+        if(historicoLibroList.isEmpty()){
+            throw new IllegalArgumentException("No existen registros historicos del producto");
+        }
+
+        HistoricoLibro historicoLibroAdd = HistoricoLibro.builder()
+                .cantidad(inventario.getStock())
+                .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                .libro(inventario.getLibro())
+                .movimiento(movimiento)
+                .minimo(inventario.getMinimo())
+                .precioVenta(inventario.getPrecioVenta())
+                .precioCompra(inventario.getPrecioCompra())
+                .baja(1)
+                .build();
+
+        Kardex kardex = Kardex.builder()
+                .precio(0.0)
+                .cantidadInicial(inventario.getStock())
+                .entradas(0)
+                .salidas(inventario.getStock())
+                .cantidadFinal(0)
+                .fechaMovimiento(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                .libro(inventario.getLibro())
+                .movimiento(movimiento)
+                .build();
+
+        inventario.setStock(0);
+        inventario.setMinimo(0);
+        inventario.setPrecioCompra(0.0);
+        inventario.setPrecioVenta(0.0);
+        inventario.setBaja(1);
+
+        kardexService.alta(kardex);
+        historicoLibroService.modificar(historicoLibroList);
+        historicoLibroService.alta(historicoLibroAdd);
+        inventarioRepository.saveAndFlush(inventario);
+
+
     }
 
 
