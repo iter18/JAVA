@@ -52,4 +52,10 @@ public class HistoricoLibroServiceImpl extends AbstractQueryAvanzadoService<Hist
 
         return this.buscar(filtro);
     }
+
+    @Override
+    @Transactional
+    public void modificar(List<HistoricoLibro> historicoLibroList) {
+         historicoLibroRepository.saveAll(historicoLibroList);
+    }
 }
