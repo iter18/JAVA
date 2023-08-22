@@ -27,6 +27,7 @@ public class HistoricoLibro  implements Serializable {
     private Integer minimo;
     private Double precioCompra;
     private Double precioVenta;
+    private Integer baja;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_LIBRO", referencedColumnName = "ID")
