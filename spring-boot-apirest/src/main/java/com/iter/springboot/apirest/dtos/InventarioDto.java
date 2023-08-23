@@ -20,6 +20,5 @@ public class InventarioDto implements Serializable {
     private Double precioCompra;
     private Double precioVenta;
     private LibroDto libro;
-
-
+    private Integer baja;
 }
