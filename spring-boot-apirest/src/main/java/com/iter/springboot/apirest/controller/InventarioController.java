@@ -52,9 +52,8 @@ public class InventarioController {
 
     @PutMapping("/bajaProducto/{id}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public ResponseEntity<HttpStatus> bajaProducto(@PathVariable Long id){
-        inventarioService.bajaProducto(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    public ResponseEntity<InventarioDto> bajaProducto(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.CREATED).body(inventarioService.bajaProducto(id));
     }
 
 }
