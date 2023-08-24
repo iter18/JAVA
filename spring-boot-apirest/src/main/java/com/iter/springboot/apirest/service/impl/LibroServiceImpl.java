@@ -269,7 +269,7 @@ public class LibroServiceImpl extends AbstractQueryAvanzadoService<Libro,Long> i
         try {
 
             final File file = ResourceUtils.getFile("classpath:reportes/Historico_Producto.jasper");
-             File imgLogo = ResourceUtils.getFile("C:/Spring5/frontend/angular/angular/clientes-app/src/assets/uplodas/80bd547e-4665-498d-99c7-975b93cd67d2_bajoEstrella.jpg");
+             File imgLogo = ResourceUtils.getFile("C:/Spring5/frontend/angular/angular/clientes-app/src/assets/uplodas/"+historicoLibroList.get(0).getLibroDto().getRutaFoto());
             final JasperReport report = (JasperReport) JRLoader.loadObject(file);
             parameters.put("ds", new JRBeanCollectionDataSource(historicoLibroList));
             parameters.put("productoNombre",historicoLibroList.get(0).getLibroDto().getTitulo());
