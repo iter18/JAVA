@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.sql.SQLDataException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -164,16 +163,25 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                 Specification<Kardex> filtro = KardexSpecification.idLibro(libro.getId());
 
                 List<Kardex> registrosProductoKardex = kardexService.buscar(filtro,Sort.by(Kardex_.fechaMovimiento.getName()).descending());
+                boolean bandera = true;
 
                 //Validación para saber si hay más de un moivimiento en Kardex del producto
-                if(registrosProductoKardex.size()>1){
-                    if(!inventarioDto.getStock().equals(registrosProductoKardex.get(0).getCantidadFinal())){
-                        throw new IllegalArgumentException("Operación no permitida: el producto ya tiene movimientos, ingrese una devolución");
+               //Código de con if anidados y mala practica
+                /*if(registrosProductoKardex.size()>1){
+                    if(registrosProductoKardex.get(0).getMovimiento().getId() != 7){
+                        if(!inventarioDto.getStock().equals(registrosProductoKardex.get(0).getCantidadFinal())){
+                            throw new IllegalArgumentException("Operación no permitida: el producto ya tiene movimientos, ingrese una devolución");
+                        }else{
+                            bandera = false;
+                        }
+                    }else{
+                        bandera = true;
                     }
-                    inventario.setMinimo(inventarioDto.getMinimo());
-                    inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
-                    inventario.setPrecioCompra(inventarioDto.getPrecioCompra());
+
                 }else{
+                    bandera = true;
+                }
+                if(bandera){
                     inventario.setStock(inventarioDto.getStock());
                     inventario.setMinimo(inventarioDto.getMinimo());
                     inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
@@ -182,6 +190,31 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                     registrosProductoKardex.get(0).setCantidadFinal(inventarioDto.getStock());
                     registrosProductoKardex.get(0).setPrecio(inventarioDto.getPrecioVenta());
                 }
+                if(!bandera){
+                    inventario.setMinimo(inventarioDto.getMinimo());
+                    inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
+                    inventario.setPrecioCompra(inventarioDto.getPrecioCompra());
+                }*/
+
+                //Codigo optmizado con clausulas de guarda
+                if(registrosProductoKardex.size() >1){
+                    if(registrosProductoKardex.get(0).getMovimiento().getId() != 7){
+                        if (!inventarioDto.getStock().equals(registrosProductoKardex.get(0).getCantidadFinal())) {
+                            throw new IllegalArgumentException("Operación no permitida: el producto ya tiene movimientos, ingrese una devolución");
+                        }
+                        bandera = false;
+                    }
+                }
+                if(bandera){
+                    inventario.setStock(inventarioDto.getStock());
+                    registrosProductoKardex.get(0).setCantidadInicial(inventarioDto.getStock());
+                    registrosProductoKardex.get(0).setCantidadFinal(inventarioDto.getStock());
+                    registrosProductoKardex.get(0).setPrecio(inventarioDto.getPrecioVenta());
+                }
+                inventario.setMinimo(inventarioDto.getMinimo());
+                inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
+                inventario.setPrecioCompra(inventarioDto.getPrecioCompra());
+
                 Inventario inventarioM = inventarioRepository.saveAndFlush(inventario);
                 HistoricoLibro historicoLibro = HistoricoLibro.builder()
                         .cantidad(inventarioDto.getStock())
@@ -190,6 +223,7 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                         .precioVenta(inventario.getPrecioVenta())
                         .precioCompra(inventarioDto.getPrecioCompra())
                         .libro(libro)
+                        .baja(0)
                         .movimiento(movimiento)
                         .build();
 
@@ -254,6 +288,7 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                     .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
                     .libro(libro)
                     .movimiento(movimiento)
+                    .baja(0)
                     .build();
 
 
