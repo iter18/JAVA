@@ -28,6 +28,12 @@ public class InventarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(inventarioDto);
     }
 
+    @PutMapping("/reingresoProducto")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    public ResponseEntity<InventarioDto> reingresoProducto(@RequestBody ProductoInventarioDto productoInventarioDto){
+        return ResponseEntity.status(HttpStatus.CREATED).body(inventarioService.reingresoProducto(productoInventarioDto));
+    }
+
     @GetMapping("/buscarProductos")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @Transactional
