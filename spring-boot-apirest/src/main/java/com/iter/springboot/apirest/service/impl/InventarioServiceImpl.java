@@ -182,7 +182,7 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
                     registrosProductoKardex.get(0).setCantidadFinal(inventarioDto.getStock());
                     registrosProductoKardex.get(0).setPrecio(inventarioDto.getPrecioVenta());
                 }
-                Inventario inventarioM = inventarioRepository.save(inventario);
+                Inventario inventarioM = inventarioRepository.saveAndFlush(inventario);
                 HistoricoLibro historicoLibro = HistoricoLibro.builder()
                         .cantidad(inventarioDto.getStock())
                         .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
@@ -269,7 +269,7 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
 
     @Override
     @Transactional
-    public void bajaProducto(Long idInventario) {
+    public InventarioDto bajaProducto(Long idInventario) {
 
         Inventario inventario = this.buscarPorId(idInventario)
                 .orElseThrow(() -> new EntityNotFoundException("No se encontro el registro en inventario"));
@@ -323,9 +323,63 @@ public class InventarioServiceImpl extends AbstractQueryAvanzadoService<Inventar
         kardexService.alta(kardex);
         historicoLibroService.modificar(historicoLibroList);
         historicoLibroService.alta(historicoLibroAdd);
-        inventarioRepository.saveAndFlush(inventario);
+        return inventarioMapper.toDto(inventarioRepository.saveAndFlush(inventario));
 
 
+    }
+
+    @Override
+    @Transactional
+    public InventarioDto reingresoProducto(ProductoInventarioDto inventarioDto) {
+        Assert.notNull(inventarioDto.getMinimo(),"El minimo es campo requerido");
+        Assert.notNull(inventarioDto.getStock(),"El stock es campo requerido");
+        Assert.notNull(inventarioDto.getPrecioCompra(),"El precio de compra es campo requerido");
+        Assert.notNull(inventarioDto.getPrecioVenta(),"El precio de venta es campo requerido");
+
+        try{
+            Inventario inventario = this.buscarPorId(inventarioDto.getIdInventario())
+                    .orElseThrow(()-> new EntityNotFoundException("No se encontro el registro en el inventario"));
+            Movimiento movimiento = movimientoService.buscarPorId(inventarioDto.getIdMovimiento())
+                    .orElseThrow(() -> new EntityNotFoundException("El tipo de movimiento no existe!"));
+            Libro libro  = libroService.buscarPorId(inventarioDto.getLibro().getId())
+                    .orElseThrow(()-> new EntityNotFoundException("No se encontro el libro seleccionado"));
+
+            inventario.setStock(inventarioDto.getStock());
+            inventario.setMinimo(inventarioDto.getMinimo());
+            inventario.setPrecioVenta(inventarioDto.getPrecioVenta());
+            inventario.setPrecioCompra(inventarioDto.getPrecioCompra());
+            inventario.setBaja(0);
+
+            HistoricoLibro historicoLibro = HistoricoLibro.builder()
+                    .cantidad(inventario.getStock())
+                    .fecha(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                    .minimo(inventario.getMinimo())
+                    .precioCompra(inventario.getPrecioCompra())
+                    .precioVenta(inventario.getPrecioVenta())
+                    .libro(libro)
+                    .movimiento(movimiento)
+                    .baja(0)
+                    .build();
+            historicoLibroService.alta(historicoLibro);
+
+            Kardex kardex = Kardex.builder()
+                    .precio(inventario.getPrecioVenta())
+                    .cantidadInicial(inventario.getStock())
+                    .entradas(0)
+                    .salidas(0)
+                    .cantidadFinal(inventario.getStock())
+                    .fechaMovimiento(LocalDateTime.now(ZoneId.of("America/Mexico_City")))
+                    .libro(libro)
+                    .movimiento(movimiento)
+                    .build();
+            kardexService.alta(kardex);
+
+            return inventarioMapper.toDto(inventarioRepository.saveAndFlush(inventario));
+
+        }catch (DataAccessException e){
+            log.error("error{}",e.getStackTrace());
+            throw e;
+        }
     }
 
 

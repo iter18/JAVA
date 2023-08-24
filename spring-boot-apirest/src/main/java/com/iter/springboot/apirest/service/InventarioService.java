@@ -19,5 +19,5 @@ public interface InventarioService extends QueryAvanzadoService<Inventario,Long>
 
     InventarioDto bajaProducto(Long idInventario);
 
-
+    InventarioDto reingresoProducto(ProductoInventarioDto productoInventarioDto);
 }
